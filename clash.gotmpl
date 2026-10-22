@@ -156,6 +156,14 @@ profile:
   store-selected: true
   store-fake-ip: true
 
+# 内置对时：设备时间不准时 VMess / TLS 仍可用，不改系统时间
+ntp:
+  enable: true
+  write-to-system: false
+  server: ntp.aliyun.com
+  port: 123
+  interval: 30
+
 # 嗅探模块
 sniffer:
   enable: true
@@ -175,15 +183,17 @@ sniffer:
     - '+.io.mi.com'
 
 # 网卡模块
+# 不写 stack：mihomo ≥ 1.19.32 默认使用自研 MIPS 栈，旧内核回落 gvisor（写死 mips 旧内核会报 invalid tun stack）
 tun:
   enable: true
-  stack: mixed
   auto-route: true
   auto-detect-interface: true
   dns-hijack:
     - any:53
     - tcp://any:53
   udp-timeout: 300
+  # UDP 全锥形 NAT：游戏联机 / P2P / 语音通话
+  endpoint-independent-nat: true
 
 hosts:
   services.googleapis.cn: services.googleapis.com
@@ -725,6 +735,7 @@ proxy-groups:
     type: url-test
     url: https://www.gstatic.com/generate_204
     interval: 300
+    expected-status: 204
     proxies:
       {{- range $n := $allNames }}
       - {{ $n | quote }}
@@ -735,6 +746,7 @@ proxy-groups:
     strategy: round-robin
     url: https://www.gstatic.com/generate_204
     interval: 300
+    expected-status: 204
     proxies:
       {{- range $n := $allNames }}
       - {{ $n | quote }}
@@ -744,6 +756,7 @@ proxy-groups:
     type: fallback
     url: https://www.gstatic.com/generate_204
     interval: 300
+    expected-status: 204
     proxies:
       {{- range $n := $allNames }}
       - {{ $n | quote }}
@@ -754,6 +767,7 @@ proxy-groups:
     type: url-test
     url: https://www.gstatic.com/generate_204
     interval: 300
+    expected-status: 204
     proxies:
       {{- range $n := $g.proxies }}
       - {{ $n | quote }}
