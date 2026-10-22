@@ -53,6 +53,83 @@
   {{- end -}}
 {{- end -}}
 
+
+{{- /* 地区分组：按节点名匹配，无节点的地区不生成 */ -}}
+{{- /* 图标：Koolson/Qure 彩色图标为主，缺失的用 GitMetaio/Surfing 补 */ -}}
+{{- $q := "https://cdn.jsdmirror.com/gh/Koolson/Qure@master/IconSet/Color/" -}}
+{{- $s := "https://cdn.jsdmirror.com/gh/GitMetaio/Surfing@main/app/icon/" -}}
+{{- $regionDefs := list
+  (dict "name" "ALL·日本地区" "icon" (print $q "Japan.png") "re" `(?i)(日本|川日|东京|大阪|泉日|埼玉|沪日|深日|[^-]日|jp|japan)`)
+  (dict "name" "ALL·中国台湾" "icon" (print $q "Taiwan.png") "re" `(?i)(台|新北|彰化|tw|taiwan|taipei)`)
+  (dict "name" "ALL·香港地区" "icon" (print $q "Hong_Kong.png") "re" `(?i)(港|hk|hong ?kong)`)
+  (dict "name" "ALL·美国地区" "icon" (print $q "United_States.png") "re" `(?i)(美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|us|united ?states)`)
+  (dict "name" "ALL·狮城地区" "icon" (print $q "Singapore.png") "re" `(?i)(新加坡|坡|狮城|sg|singapore)`)
+-}}
+{{- $matched := dict -}}
+{{- $regionGroups := list -}}
+{{- range $r := $regionDefs -}}
+  {{- $members := list -}}
+  {{- range $proxy := $supportedProxies -}}
+    {{- if regexMatch $r.re $proxy.Name -}}
+      {{- $members = append $members $proxy.Name -}}
+      {{- $_ := set $matched $proxy.Name true -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if $members -}}
+    {{- $regionGroups = append $regionGroups (dict "name" $r.name "icon" $r.icon "proxies" $members) -}}
+  {{- end -}}
+{{- end -}}
+{{- $others := list -}}
+{{- range $proxy := $supportedProxies -}}
+  {{- if not (hasKey $matched $proxy.Name) -}}
+    {{- $others = append $others $proxy.Name -}}
+  {{- end -}}
+{{- end -}}
+{{- if $others -}}
+  {{- $regionGroups = append $regionGroups (dict "name" "ALL·其它地区" "icon" (print $q "World_Map.png") "proxies" $others) -}}
+{{- end -}}
+
+{{- $allNames := list -}}
+{{- range $proxy := $supportedProxies -}}
+  {{- $allNames = append $allNames $proxy.Name -}}
+{{- end -}}
+
+{{- /* 策略组通用候选：总模式 → 自动组 → 地区组 → 拒绝/直连 → 全部节点 */ -}}
+{{- $selectList := list "总模式" "ALL·延迟最低" "ALL·负载均衡" "ALL·故障转移" -}}
+{{- range $g := $regionGroups -}}
+  {{- $selectList = append $selectList $g.name -}}
+{{- end -}}
+{{- $selectList = concat $selectList (list "⛔️ 禁止·拒绝连接" "🌐 本机·本地直连") $allNames -}}
+{{- /* 国内应用默认直连 */ -}}
+{{- $serviceGroups := list
+  (dict "name" "小红书" "icon" (print $s "XiaoHongShu.svg") "prefer" "🌐 本机·本地直连")
+  (dict "name" "抖音" "icon" (print $s "DouYin.svg") "prefer" "🌐 本机·本地直连")
+  (dict "name" "BiliBili" "icon" (print $q "bilibili.png") "prefer" "🌐 本机·本地直连")
+  (dict "name" "Steam" "icon" (print $q "Steam.png"))
+  (dict "name" "游戏平台" "icon" (print $q "Game.png"))
+  (dict "name" "Apple" "icon" (print $q "Apple.png"))
+  (dict "name" "Microsoft" "icon" (print $q "Microsoft.png"))
+  (dict "name" "Telegram" "icon" (print $q "Telegram.png"))
+  (dict "name" "Discord" "icon" (print $q "Discord.png"))
+  (dict "name" "Spotify" "icon" (print $q "Spotify.png"))
+  (dict "name" "TikTok" "icon" (print $q "TikTok.png"))
+  (dict "name" "YouTube" "icon" (print $q "YouTube.png"))
+  (dict "name" "Netflix" "icon" (print $q "Netflix.png"))
+  (dict "name" "Disney+" "icon" (print $q "Disney+.png"))
+  (dict "name" "海外媒体" "icon" (print $q "ForeignMedia.png"))
+  (dict "name" "巴哈姆特" "icon" (print $q "Bahamut.png") "prefer" "ALL·中国台湾")
+  (dict "name" "Google" "icon" (print $q "Google_Search.png"))
+  (dict "name" "GoogleFCM" "icon" (print $s "GoogleFCM.svg"))
+  (dict "name" "Facebook" "icon" (print $q "Facebook.png"))
+  (dict "name" "AI" "icon" (print $q "AI.png"))
+  (dict "name" "GitHub" "icon" (print $q "GitHub.png"))
+  (dict "name" "Twitter(X)" "icon" (print $q "X.png"))
+  (dict "name" "PayPal" "icon" (print $q "PayPal.png"))
+  (dict "name" "加密货币" "icon" (print $q "Cryptocurrency.png") "prefer" "ALL·中国台湾")
+  (dict "name" "Speedtest" "icon" (print $q "Speedtest.png"))
+  (dict "name" "漏网之鱼" "icon" (print $q "Final.png"))
+-}}
+
 # {{ .SiteName }}-{{ .SubscribeName }}
 # Traffic: {{ $used }} GiB/{{ $total }} GiB | Expires: {{ $ExpiredAt }}
 # Generated at: {{ now | date "2006-01-02 15:04:05" }}
@@ -66,7 +143,7 @@ dns:
   nameserver:
     - system
     - https://dns.alidns.com/dns-query
-
+    - https://doh.pub/dns-query
 proxies:
 {{- range $proxy := $supportedProxies }}
   {{- $common := "udp: true" -}}
@@ -113,166 +190,169 @@ proxies:
 {{- end }}
 
 proxy-groups:
-  - { name: 🚀 Proxy, type: select, proxies: [🌏 Auto, 🎯 Direct, {{ $proxyNames }}] }
-  - { name: 🍎 Apple, type: select, proxies: [🚀 Proxy, 🎯 Direct, {{ $proxyNames }}] }
-  - { name: 🔍 Google, type: select, proxies: [🚀 Proxy, 🎯 Direct, {{ $proxyNames }}] }
-  - { name: 🪟 Microsoft, type: select, proxies: [🚀 Proxy, 🎯 Direct, {{ $proxyNames }}] }
-  - { name: 📺 GlobalMedia, type: select, proxies: [🚀 Proxy, 🎯 Direct, {{ $proxyNames }}] }
-  - { name: 📟 Telegram, type: select, proxies: [🚀 Proxy, 🎯 Direct, {{ $proxyNames }}] }
-  - { name: 🤖 AI, type: select, proxies: [🚀 Proxy, 🎯 Direct, {{ $proxyNames }}] }
-  - { name: 🪙 Crypto, type: select, proxies: [🚀 Proxy, 🎯 Direct, {{ $proxyNames }}] }
-  - { name: 🎮 Game, type: select, proxies: [🚀 Proxy, 🎯 Direct, {{ $proxyNames }}] }
-  - { name: 🇨🇳 China, type: select, proxies: [🎯 Direct, 🚀 Proxy, {{ $proxyNames }}] }
-  - { name: 🎯 Direct, type: select, proxies: [DIRECT], hidden: true }
-  - { name: 🐠 Final, type: select, proxies: [🚀 Proxy, 🎯 Direct, {{ $proxyNames }}] }
-  - { name: 🌏 Auto, type: url-test, proxies: [{{ $proxyNames }}], url: 'http://www.gstatic.com/generate_204', interval: 300 }
+  - name: 总模式
+    icon: {{ $q }}Proxy.png
+    type: select
+    proxies:
+      - ALL·延迟最低
+      - ALL·负载均衡
+      - ALL·故障转移
+      {{- range $g := $regionGroups }}
+      - {{ $g.name }}
+      {{- end }}
+      - 🌐 本机·本地直连
+{{- range $g := $serviceGroups }}
+  - name: {{ $g.name }}
+    icon: {{ $g.icon }}
+    type: select
+    proxies:
+      {{- $opts := $selectList -}}
+      {{- if and (hasKey $g "prefer") (has $g.prefer $selectList) -}}
+        {{- $opts = concat (list $g.prefer) (without $selectList $g.prefer) -}}
+      {{- end }}
+      {{- range $n := $opts }}
+      - {{ $n | quote }}
+      {{- end }}
+{{- end }}
+  - name: 广告拦截
+    icon: {{ $q }}Advertising.png
+    type: select
+    proxies:
+      - ⛔️ 禁止·拒绝连接
+      - 🌐 本机·本地直连
+  - name: 🌐 本机·本地直连
+    icon: {{ $q }}Direct.png
+    type: select
+    proxies:
+      - DIRECT
+  - name: ⛔️ 禁止·拒绝连接
+    icon: {{ $q }}Reject.png
+    type: select
+    proxies:
+      - REJECT
+  - name: ALL·延迟最低
+    icon: {{ $q }}Auto.png
+    type: url-test
+    url: http://www.gstatic.com/generate_204
+    interval: 300
+    proxies:
+      {{- range $n := $allNames }}
+      - {{ $n | quote }}
+      {{- end }}
+  - name: ALL·负载均衡
+    icon: {{ $q }}Round_Robin.png
+    type: load-balance
+    strategy: round-robin
+    url: http://www.gstatic.com/generate_204
+    interval: 300
+    proxies:
+      {{- range $n := $allNames }}
+      - {{ $n | quote }}
+      {{- end }}
+  - name: ALL·故障转移
+    icon: {{ $q }}Available.png
+    type: fallback
+    url: http://www.gstatic.com/generate_204
+    interval: 300
+    proxies:
+      {{- range $n := $allNames }}
+      - {{ $n | quote }}
+      {{- end }}
+{{- range $g := $regionGroups }}
+  - name: {{ $g.name }}
+    icon: {{ $g.icon }}
+    type: url-test
+    url: http://www.gstatic.com/generate_204
+    interval: 300
+    proxies:
+      {{- range $n := $g.proxies }}
+      - {{ $n | quote }}
+      {{- end }}
+{{- end }}
 
 rules:
-  - RULE-SET, Apple, 🍎 Apple
-  - RULE-SET, Google, 🔍 Google
-  - RULE-SET, Microsoft, 🪟 Microsoft
-  - RULE-SET, Github, 🪟 Microsoft
-  - RULE-SET, HBO, 📺 GlobalMedia
-  - RULE-SET, Disney, 📺 GlobalMedia
-  - RULE-SET, TikTok, 📺 GlobalMedia
-  - RULE-SET, Netflix, 📺 GlobalMedia
-  - RULE-SET, GlobalMedia, 📺 GlobalMedia
-  - RULE-SET, Telegram, 📟 Telegram
-  - RULE-SET, OpenAI, 🤖 AI
-  - RULE-SET, Gemini, 🤖 AI
-  - RULE-SET, Copilot, 🤖 AI
-  - RULE-SET, Claude, 🤖 AI
-  - RULE-SET, Crypto, 🪙 Crypto
-  - RULE-SET, Cryptocurrency, 🪙 Crypto
-  - RULE-SET, Game, 🎮 Game
-  - RULE-SET, Global, 🚀 Proxy
-  - RULE-SET, ChinaMax, 🇨🇳 China
-  - RULE-SET, Lan, 🎯 Direct
-  - GEOIP, CN, 🇨🇳 China
-  - MATCH, 🐠 Final
+  - RULE-SET,Lan,🌐 本机·本地直连
+  - RULE-SET,GoogleFCM,GoogleFCM
+  - RULE-SET,YouTube,YouTube
+  - RULE-SET,Google,Google
+  - RULE-SET,AdvertisingLite,广告拦截
+  - RULE-SET,DouYin,抖音
+  - RULE-SET,XiaoHongShu,小红书
+  - RULE-SET,BiliBili,BiliBili
+  # Steam 国内 CDN 下载直连，商店与登录仍走 Steam 组
+  - RULE-SET,SteamCN,🌐 本机·本地直连
+  - RULE-SET,Steam,Steam
+  - RULE-SET,Game,游戏平台
+  - RULE-SET,GitHub,GitHub
+  - RULE-SET,Discord,Discord
+  - RULE-SET,TikTok,TikTok
+  - RULE-SET,Twitter,Twitter(X)
+  - RULE-SET,Netflix,Netflix
+  - RULE-SET,Disney,Disney+
+  - RULE-SET,HBO,海外媒体
+  - RULE-SET,PrimeVideo,海外媒体
+  - RULE-SET,Bahamut,巴哈姆特
+  - RULE-SET,Spotify,Spotify
+  - RULE-SET,Facebook,Facebook
+  - RULE-SET,OpenAI,AI
+  - RULE-SET,Claude,AI
+  - RULE-SET,Gemini,AI
+  - RULE-SET,Copilot,AI
+  - RULE-SET,PayPal,PayPal
+  - RULE-SET,Cryptocurrency,加密货币
+  - RULE-SET,Speedtest,Speedtest
+  - RULE-SET,Apple,Apple
+  - RULE-SET,Microsoft,Microsoft
+  - RULE-SET,Telegram,Telegram
+  - RULE-SET,Global,总模式
+  - RULE-SET,ChinaMax,🌐 本机·本地直连
+  - GEOIP,CN,🌐 本机·本地直连
+  - MATCH,漏网之鱼
 
+# 规则来源: blackmatrix7/ios_rule_script（perfect-panel/rules 镜像）
 rule-providers:
-  Apple:
+{{- $rp := "https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash" -}}
+{{- $rules := list
+  (list "Lan" "Lan/Lan_No_Resolve")
+  (list "GoogleFCM" "GoogleFCM/GoogleFCM_No_Resolve")
+  (list "YouTube" "YouTube/YouTube_No_Resolve")
+  (list "Google" "Google/Google_No_Resolve")
+  (list "AdvertisingLite" "AdvertisingLite/AdvertisingLite_Classical_No_Resolve")
+  (list "DouYin" "DouYin/DouYin_No_Resolve")
+  (list "XiaoHongShu" "XiaoHongShu/XiaoHongShu_No_Resolve")
+  (list "BiliBili" "BiliBili/BiliBili_No_Resolve")
+  (list "SteamCN" "SteamCN/SteamCN_No_Resolve")
+  (list "Steam" "Steam/Steam_No_Resolve")
+  (list "Game" "Game/Game_No_Resolve")
+  (list "GitHub" "GitHub/GitHub_No_Resolve")
+  (list "Discord" "Discord/Discord_No_Resolve")
+  (list "TikTok" "TikTok/TikTok_No_Resolve")
+  (list "Twitter" "Twitter/Twitter_No_Resolve")
+  (list "Netflix" "Netflix/Netflix_Classical_No_Resolve")
+  (list "Disney" "Disney/Disney_No_Resolve")
+  (list "HBO" "HBO/HBO_No_Resolve")
+  (list "PrimeVideo" "PrimeVideo/PrimeVideo_No_Resolve")
+  (list "Bahamut" "Bahamut/Bahamut_No_Resolve")
+  (list "Spotify" "Spotify/Spotify_No_Resolve")
+  (list "Facebook" "Facebook/Facebook_No_Resolve")
+  (list "OpenAI" "OpenAI/OpenAI_No_Resolve")
+  (list "Claude" "Claude/Claude_No_Resolve")
+  (list "Gemini" "Gemini/Gemini_No_Resolve")
+  (list "Copilot" "Copilot/Copilot_No_Resolve")
+  (list "PayPal" "PayPal/PayPal_No_Resolve")
+  (list "Cryptocurrency" "Cryptocurrency/Cryptocurrency_No_Resolve")
+  (list "Speedtest" "Speedtest/Speedtest_No_Resolve")
+  (list "Apple" "Apple/Apple_Classical_No_Resolve")
+  (list "Microsoft" "Microsoft/Microsoft_No_Resolve")
+  (list "Telegram" "Telegram/Telegram_No_Resolve")
+  (list "Global" "Global/Global_Classical_No_Resolve")
+  (list "ChinaMax" "ChinaMax/ChinaMax_Classical_No_Resolve")
+}}
+{{- range $r := $rules }}
+  {{ index $r 0 }}:
     type: http
     behavior: classical
     format: yaml
-    url: https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash/Apple/Apple_Classical_No_Resolve.yaml
+    url: {{ $rp }}/{{ index $r 1 }}.yaml
     interval: 86400
-  Google:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash/Google/Google_No_Resolve.yaml
-    interval: 86400
-  Microsoft:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash/Microsoft/Microsoft.yaml
-    interval: 86400
-  Github:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash/GitHub/GitHub.yaml
-    interval: 86400
-  HBO:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash/HBO/HBO.yaml
-    interval: 86400
-  Disney:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash/Disney/Disney.yaml
-    interval: 86400
-  TikTok:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash/TikTok/TikTok.yaml
-    interval: 86400
-  Netflix:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash/Netflix/Netflix.yaml
-    interval: 86400
-  GlobalMedia:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash/GlobalMedia/GlobalMedia_Classical_No_Resolve.yaml
-    interval: 86400
-  Telegram:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash/Telegram/Telegram_No_Resolve.yaml
-    interval: 86400
-  OpenAI:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash/OpenAI/OpenAI.yaml
-    interval: 86400
-  Gemini:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash/Gemini/Gemini.yaml
-    interval: 86400
-  Copilot:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash/Copilot/Copilot.yaml
-    interval: 86400
-  Claude:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash/Claude/Claude.yaml
-    interval: 86400
-  Crypto:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash/Crypto/Crypto.yaml
-    interval: 86400
-  Cryptocurrency:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash/Cryptocurrency/Cryptocurrency.yaml
-    interval: 86400
-  Game:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash/Game/Game.yaml
-    interval: 86400
-  Global:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash/Global/Global_Classical_No_Resolve.yaml
-    interval: 86400
-  ChinaMax:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash/ChinaMax/ChinaMax_Classical_No_Resolve.yaml
-    interval: 86400
-  Lan:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash/Lan/Lan.yaml
-    interval: 86400
-
-url-rewrite:
-  - ^https?:\/\/(www.)?g\.cn https://www.google.com 302
-  - ^https?:\/\/(www.)?google\.cn https://www.google.com 302
+{{- end }}
