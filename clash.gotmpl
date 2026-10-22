@@ -798,7 +798,8 @@ rule-providers:
   (list "Bahamut_域" "domain" "geo/geosite/bahamut")
   (list "PayPal_域" "domain" "geo/geosite/paypal")
   (list "Crypto_域" "domain" "geo/geosite/category-cryptocurrency")
-  (list "Speedtest_域" "domain" "geo/geosite/ookla-speedtest")
+  (list "SpeedtestCN_域" "domain" "geo/geosite/category-speedtest@cn")
+  (list "Speedtest_域" "domain" "geo/geosite/category-speedtest")
   (list "Global_域" "domain" "geo/geosite/geolocation-!cn")
   (list "TikTok_域" "domain" "geo/geosite/tiktok")
   (list "Spotify_域" "domain" "geo/geosite/spotify")
@@ -887,6 +888,8 @@ rules:
   - RULE-SET,AI_域,AI
   - RULE-SET,PayPal_域,PayPal
   - RULE-SET,Crypto_域,加密货币
+  # 国内测速站（speedtest.cn / 高校测速）直连测本地宽带，其余测速站走 Speedtest 组
+  - RULE-SET,SpeedtestCN_域,🌐 本机·本地直连
   - RULE-SET,Speedtest_域,Speedtest
   - RULE-SET,AppleCN_域,🌐 本机·本地直连
   - RULE-SET,MicrosoftCN_域,🌐 本机·本地直连

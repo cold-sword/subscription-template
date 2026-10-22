@@ -300,7 +300,28 @@ rules:
   - RULE-SET,Copilot,AI
   - RULE-SET,PayPal,PayPal
   - RULE-SET,Cryptocurrency,加密货币
+  # 国内测速站直连测本地宽带，其余测速站走 Speedtest 组（fast.com 随 Netflix）
+  - DOMAIN-SUFFIX,speedtest.cn,🌐 本机·本地直连
+  - DOMAIN-SUFFIX,cnspeedtest.cn,🌐 本机·本地直连
+  - DOMAIN-SUFFIX,speedtest.mfcyun.com,🌐 本机·本地直连
+  - DOMAIN-SUFFIX,speed.nju.edu.cn,🌐 本机·本地直连
+  - DOMAIN-SUFFIX,test.nju.edu.cn,🌐 本机·本地直连
+  - DOMAIN-SUFFIX,test.ustc.edu.cn,🌐 本机·本地直连
+  - DOMAIN-SUFFIX,speedtest.shu.edu.cn,🌐 本机·本地直连
+  - DOMAIN-SUFFIX,speed.neu6.edu.cn,🌐 本机·本地直连
   - RULE-SET,Speedtest,Speedtest
+  - DOMAIN-SUFFIX,speed.cloudflare.com,Speedtest
+  - DOMAIN-SUFFIX,librespeed.org,Speedtest
+  - DOMAIN-SUFFIX,nperf.com,Speedtest
+  - DOMAIN-SUFFIX,openspeedtest.com,Speedtest
+  - DOMAIN-SUFFIX,speedof.me,Speedtest
+  - DOMAIN-SUFFIX,testmy.net,Speedtest
+  - DOMAIN-SUFFIX,measurementlab.net,Speedtest
+  - DOMAIN-SUFFIX,speedcheck.org,Speedtest
+  - DOMAIN-SUFFIX,fastspeedtest.com,Speedtest
+  - DOMAIN-SUFFIX,meter.net,Speedtest
+  - DOMAIN-SUFFIX,wifiman.me,Speedtest
+  - DOMAIN-SUFFIX,speedtest.org,Speedtest
   - RULE-SET,Apple,Apple
   - RULE-SET,Microsoft,Microsoft
   - RULE-SET,Telegram,Telegram
