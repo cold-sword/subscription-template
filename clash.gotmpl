@@ -57,13 +57,15 @@
 
 
 {{- /* 地区分组：按节点名匹配，无节点的地区不生成 */ -}}
-{{- $iconBase := "https://cdn.jsdelivr.net/gh/GitMetaio/Surfing@main/app/icon/" -}}
+{{- /* 图标：Koolson/Qure 彩色图标为主，缺失的用 GitMetaio/Surfing 补 */ -}}
+{{- $q := "https://cdn.jsdmirror.com/gh/Koolson/Qure@master/IconSet/Color/" -}}
+{{- $s := "https://cdn.jsdmirror.com/gh/GitMetaio/Surfing@main/app/icon/" -}}
 {{- $regionDefs := list
-  (dict "name" "ALL·日本地区" "icon" "JP.svg" "re" `(?i)(日本|川日|东京|大阪|泉日|埼玉|沪日|深日|[^-]日|jp|japan)`)
-  (dict "name" "ALL·中国台湾" "icon" "CN.svg" "re" `(?i)(台|新北|彰化|tw|taiwan|taipei)`)
-  (dict "name" "ALL·香港地区" "icon" "HK.svg" "re" `(?i)(港|hk|hong ?kong)`)
-  (dict "name" "ALL·美国地区" "icon" "US.svg" "re" `(?i)(美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|us|united ?states)`)
-  (dict "name" "ALL·狮城地区" "icon" "Singapore.svg" "re" `(?i)(新加坡|坡|狮城|sg|singapore)`)
+  (dict "name" "ALL·日本地区" "icon" (print $q "Japan.png") "re" `(?i)(日本|川日|东京|大阪|泉日|埼玉|沪日|深日|[^-]日|jp|japan)`)
+  (dict "name" "ALL·中国台湾" "icon" (print $q "Taiwan.png") "re" `(?i)(台|新北|彰化|tw|taiwan|taipei)`)
+  (dict "name" "ALL·香港地区" "icon" (print $q "Hong_Kong.png") "re" `(?i)(港|hk|hong ?kong)`)
+  (dict "name" "ALL·美国地区" "icon" (print $q "United_States.png") "re" `(?i)(美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|us|united ?states)`)
+  (dict "name" "ALL·狮城地区" "icon" (print $q "Singapore.png") "re" `(?i)(新加坡|坡|狮城|sg|singapore)`)
 -}}
 {{- $matched := dict -}}
 {{- $regionGroups := list -}}
@@ -86,7 +88,7 @@
   {{- end -}}
 {{- end -}}
 {{- if $others -}}
-  {{- $regionGroups = append $regionGroups (dict "name" "ALL·其它地区" "icon" "Globe.svg" "proxies" $others) -}}
+  {{- $regionGroups = append $regionGroups (dict "name" "ALL·其它地区" "icon" (print $q "World_Map.png") "proxies" $others) -}}
 {{- end -}}
 
 {{- $allNames := list -}}
@@ -101,29 +103,34 @@
 {{- end -}}
 {{- $selectList = concat $selectList (list "⛔️ 禁止·拒绝连接" "🌐 本机·本地直连") $allNames -}}
 {{- /* 国内应用默认直连 */ -}}
-{{- $directFirst := concat (list "🌐 本机·本地直连") (without $selectList "🌐 本机·本地直连") -}}
-
 {{- $serviceGroups := list
-  (dict "name" "小红书" "icon" "XiaoHongShu.svg" "direct" true)
-  (dict "name" "抖音" "icon" "DouYin.svg" "direct" true)
-  (dict "name" "BiliBili" "icon" "BiliBili.svg" "direct" true)
-  (dict "name" "Steam" "icon" "Steam.svg")
-  (dict "name" "Apple" "icon" "Apple.svg")
-  (dict "name" "Microsoft" "icon" "Microsoft.svg")
-  (dict "name" "Telegram" "icon" "Telegram.svg")
-  (dict "name" "Discord" "icon" "Discord.svg")
-  (dict "name" "Spotify" "icon" "Spotify.svg")
-  (dict "name" "TikTok" "icon" "TikTok.svg")
-  (dict "name" "YouTube" "icon" "YouTube.svg")
-  (dict "name" "Netflix" "icon" "Netflix.svg")
-  (dict "name" "Google" "icon" "Google.svg")
-  (dict "name" "GoogleFCM" "icon" "GoogleFCM.svg")
-  (dict "name" "Facebook" "icon" "Facebook.svg")
-  (dict "name" "AI" "icon" "OpenAI.svg")
-  (dict "name" "GitHub" "icon" "GitHub.svg")
-  (dict "name" "Twitter(X)" "icon" "Twitter.svg")
-  (dict "name" "DNS连接" "icon" "DNS.svg")
-  (dict "name" "漏网之鱼" "icon" "HBASE-copy.svg")
+  (dict "name" "小红书" "icon" (print $s "XiaoHongShu.svg") "prefer" "🌐 本机·本地直连")
+  (dict "name" "抖音" "icon" (print $s "DouYin.svg") "prefer" "🌐 本机·本地直连")
+  (dict "name" "BiliBili" "icon" (print $q "bilibili.png") "prefer" "🌐 本机·本地直连")
+  (dict "name" "Steam" "icon" (print $q "Steam.png"))
+  (dict "name" "游戏平台" "icon" (print $q "Game.png"))
+  (dict "name" "Apple" "icon" (print $q "Apple.png"))
+  (dict "name" "Microsoft" "icon" (print $q "Microsoft.png"))
+  (dict "name" "Telegram" "icon" (print $q "Telegram.png"))
+  (dict "name" "Discord" "icon" (print $q "Discord.png"))
+  (dict "name" "Spotify" "icon" (print $q "Spotify.png"))
+  (dict "name" "TikTok" "icon" (print $q "TikTok.png"))
+  (dict "name" "YouTube" "icon" (print $q "YouTube.png"))
+  (dict "name" "Netflix" "icon" (print $q "Netflix.png"))
+  (dict "name" "Disney+" "icon" (print $q "Disney+.png"))
+  (dict "name" "海外媒体" "icon" (print $q "ForeignMedia.png"))
+  (dict "name" "巴哈姆特" "icon" (print $q "Bahamut.png") "prefer" "ALL·中国台湾")
+  (dict "name" "Google" "icon" (print $q "Google_Search.png"))
+  (dict "name" "GoogleFCM" "icon" (print $s "GoogleFCM.svg"))
+  (dict "name" "Facebook" "icon" (print $q "Facebook.png"))
+  (dict "name" "AI" "icon" (print $q "AI.png"))
+  (dict "name" "GitHub" "icon" (print $q "GitHub.png"))
+  (dict "name" "Twitter(X)" "icon" (print $q "X.png"))
+  (dict "name" "PayPal" "icon" (print $q "PayPal.png"))
+  (dict "name" "加密货币" "icon" (print $q "Cryptocurrency.png"))
+  (dict "name" "Speedtest" "icon" (print $q "Speedtest.png"))
+  (dict "name" "DNS连接" "icon" (print $s "DNS.svg"))
+  (dict "name" "漏网之鱼" "icon" (print $q "Final.png"))
 -}}
 
 # {{ .SiteName }}-{{ .SubscribeName }}
@@ -134,12 +141,12 @@
 mixed-port: 10808
 ipv6: true
 mode: rule
-allow-lan: true
+allow-lan: false
 bind-address: '*'
 unified-delay: true
 tcp-concurrent: true
 log-level: info
-external-controller: '0.0.0.0:9090'
+external-controller: '127.0.0.1:9090'
 
 # 节点记忆
 profile:
@@ -192,12 +199,28 @@ dns:
     - 'RULE-SET:CN_域'
     - 'RULE-SET:Private_域'
     - 'RULE-SET:GoogleFCM_域'
+    # 系统联网检测 / NTP / 游戏主机 NAT 检测
+    - '+.msftconnecttest.com'
+    - '+.msftncsi.com'
+    - 'time.*.com'
+    - 'time.*.gov'
+    - 'ntp.*.com'
+    - '+.pool.ntp.org'
+    - '+.stun.*.*'
+    - '+.stun.*.*.*'
+    - '+.xboxlive.com'
+    - 'xbox.*.microsoft.com'
+    - '+.srv.nintendo.net'
+    - '+.stun.playstation.net'
+    - 'lens.l.google.com'
   proxy-server-nameserver:
     - 'https://1.12.12.12:443/dns-query#🌐 本机·本地直连&h3=false'
     - 'https://120.53.53.53:443/dns-query#🌐 本机·本地直连&h3=false'
     - 'https://223.5.5.5:443/dns-query#🌐 本机·本地直连&h3=true'
     - 'https://223.6.6.6:443/dns-query#🌐 本机·本地直连&h3=true'
   nameserver-policy:
+    # 局域网域名（nas.lan 等）交给路由器
+    'RULE-SET:Private_域': system
     'RULE-SET:CN_域,Microsoft_域,Apple_域':
       - 'https://1.12.12.12:443/dns-query#🌐 本机·本地直连&h3=false'
       - 'https://120.53.53.53:443/dns-query#🌐 本机·本地直连&h3=false'
@@ -208,9 +231,13 @@ dns:
     - 'https://8.8.4.4:443/dns-query#DNS连接&h3=true'
     - 'https://1.1.1.1:443/dns-query#DNS连接&h3=false'
     - 'https://1.0.0.1:443/dns-query#DNS连接&h3=false'
+  # 直连流量的解析：国内 DoH，防运营商劫持，CDN 就近
   direct-nameserver:
-    - 1.12.12.12
-    - 223.6.6.6
+    - 'https://1.12.12.12:443/dns-query#🌐 本机·本地直连&h3=false'
+    - 'https://120.53.53.53:443/dns-query#🌐 本机·本地直连&h3=false'
+    - 'https://223.5.5.5:443/dns-query#🌐 本机·本地直连&h3=true'
+    - 'https://223.6.6.6:443/dns-query#🌐 本机·本地直连&h3=true'
+  direct-nameserver-follow-policy: false
 
 proxies:
 - { name: 🌐 本机·本地直连, type: direct, udp: true }
@@ -651,7 +678,7 @@ proxies:
 
 proxy-groups:
   - name: 总模式
-    icon: {{ $iconBase }}All.svg
+    icon: {{ $q }}Proxy.png
     type: select
     proxies:
       - ALL·延迟最低
@@ -663,31 +690,35 @@ proxy-groups:
       - 🌐 本机·本地直连
 {{- range $g := $serviceGroups }}
   - name: {{ $g.name }}
-    icon: {{ $iconBase }}{{ $g.icon }}
+    icon: {{ $g.icon }}
     type: select
     proxies:
-      {{- range $n := ternary $directFirst $selectList (hasKey $g "direct") }}
+      {{- $opts := $selectList -}}
+      {{- if and (hasKey $g "prefer") (has $g.prefer $selectList) -}}
+        {{- $opts = concat (list $g.prefer) (without $selectList $g.prefer) -}}
+      {{- end }}
+      {{- range $n := $opts }}
       - {{ $n | quote }}
       {{- end }}
 {{- end }}
   - name: 广告拦截
-    icon: {{ $iconBase }}No-ads-all.svg
+    icon: {{ $q }}Advertising.png
     type: select
     proxies:
+      - ⛔️ 禁止·拒绝连接
       - PASS
       - REJECT-DROP
-      - ⛔️ 禁止·拒绝连接
       - 🌐 DNS_Hijack
   - name: WebRTC
-    icon: {{ $iconBase }}WebRTC.svg
+    icon: {{ $s }}WebRTC.svg
     type: select
     proxies:
+      - PASS
       - ⛔️ 禁止·拒绝连接
       - 🌐 DNS_Hijack
       - REJECT-DROP
-      - PASS
   - name: ALL·延迟最低
-    icon: {{ $iconBase }}Return.svg
+    icon: {{ $q }}Auto.png
     type: url-test
     url: https://www.gstatic.com/generate_204
     interval: 300
@@ -696,7 +727,7 @@ proxy-groups:
       - {{ $n | quote }}
       {{- end }}
   - name: ALL·负载均衡
-    icon: {{ $iconBase }}Return.svg
+    icon: {{ $q }}Round_Robin.png
     type: load-balance
     strategy: round-robin
     url: https://www.gstatic.com/generate_204
@@ -706,7 +737,7 @@ proxy-groups:
       - {{ $n | quote }}
       {{- end }}
   - name: ALL·故障转移
-    icon: {{ $iconBase }}Return.svg
+    icon: {{ $q }}Available.png
     type: fallback
     url: https://www.gstatic.com/generate_204
     interval: 300
@@ -716,7 +747,7 @@ proxy-groups:
       {{- end }}
 {{- range $g := $regionGroups }}
   - name: {{ $g.name }}
-    icon: {{ $iconBase }}{{ $g.icon }}
+    icon: {{ $g.icon }}
     type: url-test
     url: https://www.gstatic.com/generate_204
     interval: 300
@@ -727,6 +758,7 @@ proxy-groups:
 {{- end }}
 
 # 规则来源: https://github.com/MetaCubeX/meta-rules-dat
+# 规则集一律直连下载（国内镜像），避免首次启动时规则未加载、走代理失败导致加载不了
 rule-providers:
 {{- $ruleBase := "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta" -}}
 {{- $mrs := list
@@ -737,6 +769,15 @@ rule-providers:
   (list "BiliBili_域" "domain" "geo/geosite/bilibili")
   (list "BiliBili_IP" "ipcidr" "geo-lite/geoip/bilibili")
   (list "Steam_域" "domain" "geo/geosite/steam")
+  (list "Game_域" "domain" "geo/geosite/category-games-!cn")
+  (list "Disney_域" "domain" "geo/geosite/disney")
+  (list "HBO_域" "domain" "geo/geosite/hbo")
+  (list "PrimeVideo_域" "domain" "geo/geosite/primevideo")
+  (list "Bahamut_域" "domain" "geo/geosite/bahamut")
+  (list "PayPal_域" "domain" "geo/geosite/paypal")
+  (list "Crypto_域" "domain" "geo/geosite/category-cryptocurrency")
+  (list "Speedtest_域" "domain" "geo/geosite/ookla-speedtest")
+  (list "Global_域" "domain" "geo/geosite/geolocation-!cn")
   (list "TikTok_域" "domain" "geo/geosite/tiktok")
   (list "Spotify_域" "domain" "geo/geosite/spotify")
   (list "Facebook_域" "domain" "geo/geosite/facebook")
@@ -766,12 +807,14 @@ rule-providers:
     format: text
     url: https://cdn.jsdmirror.com/gh/GitMetaio/Surfing@main/box_bll/clash/rules/WebRTC.list
     interval: 86400
+    proxy: 🌐 本机·本地直连
   No-ads-all_域:
     type: http
     behavior: domain
     format: mrs
     url: https://cdn.jsdmirror.com/gh/TG-Twilight/AWAvenue-Ads-Rule@main/Filters/AWAvenue-Ads-Rule-Clash.mrs
     interval: 86400
+    proxy: 🌐 本机·本地直连
 {{- range $r := $mrs }}
   {{ index $r 0 }}:
     type: http
@@ -779,9 +822,12 @@ rule-providers:
     format: mrs
     url: {{ $ruleBase }}/{{ index $r 2 }}.mrs
     interval: 86400
+    proxy: 🌐 本机·本地直连
 {{- end }}
 
 rules:
+  - RULE-SET,Private_域,🌐 本机·本地直连
+  - RULE-SET,Private_IP,🌐 本机·本地直连,no-resolve
   - DST-PORT,53,🌐 DNS_Hijack
   - DST-PORT,853,DNS连接
   - RULE-SET,WebRTC_端/域,WebRTC
@@ -798,6 +844,7 @@ rules:
   - RULE-SET,BiliBili_域,BiliBili
   - RULE-SET,BiliBili_IP,BiliBili,no-resolve
   - RULE-SET,Steam_域,Steam
+  - RULE-SET,Game_域,游戏平台
   - RULE-SET,GitHub_域,GitHub
   - RULE-SET,Discord_域,Discord
   - RULE-SET,TikTok_域,TikTok
@@ -805,17 +852,24 @@ rules:
   - RULE-SET,Twitter_IP,Twitter(X),no-resolve
   - RULE-SET,Netflix_域,Netflix
   - RULE-SET,Netflix_IP,Netflix,no-resolve
+  - RULE-SET,Disney_域,Disney+
+  - RULE-SET,HBO_域,海外媒体
+  - RULE-SET,PrimeVideo_域,海外媒体
+  - RULE-SET,Bahamut_域,巴哈姆特
   - RULE-SET,Spotify_域,Spotify
   - RULE-SET,Facebook_域,Facebook
   - RULE-SET,Facebook_IP,Facebook,no-resolve
   - RULE-SET,AI_域,AI
+  - RULE-SET,PayPal_域,PayPal
+  - RULE-SET,Crypto_域,加密货币
+  - RULE-SET,Speedtest_域,Speedtest
   - RULE-SET,Apple_域,Apple
   - RULE-SET,Apple_IP,Apple,no-resolve
   - RULE-SET,Microsoft_域,Microsoft
   - RULE-SET,Telegram_域,Telegram
   - RULE-SET,Telegram_IP,Telegram,no-resolve
-  - RULE-SET,Private_域,🌐 本机·本地直连
-  - RULE-SET,Private_IP,🌐 本机·本地直连,no-resolve
+  # 境外域名直接走代理，免去 CN_IP 判断前的 DNS 解析
+  - RULE-SET,Global_域,总模式
   - RULE-SET,CN_域,🌐 本机·本地直连
   - RULE-SET,CN_IP,🌐 本机·本地直连
   - MATCH,漏网之鱼
