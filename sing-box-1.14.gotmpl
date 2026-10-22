@@ -362,7 +362,7 @@
 {{- /* ---- 规则集: MetaCubeX meta-rules-dat (sing 分支) + AWAvenue 去广告 ---- */ -}}
 {{- $sb := "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@sing" -}}
 {{- $ruleSets := list (dict "tag" "ads" "type" "remote" "format" "source" "url" "https://cdn.jsdmirror.com/gh/TG-Twilight/AWAvenue-Ads-Rule@main/Filters/AWAvenue-Ads-Rule-Singbox.json") -}}
-{{- range $n := list "private" "googlefcm" "youtube" "google" "douyin" "xiaohongshu" "bilibili" "steam@cn" "category-games@cn" "steam" "category-games-!cn" "github" "discord" "tiktok" "twitter" "netflix" "disney" "hbo" "primevideo" "bahamut" "spotify" "facebook" "category-ai-!cn" "paypal" "category-cryptocurrency" "category-speedtest" "apple@cn" "microsoft@cn" "apple" "microsoft" "telegram" "geolocation-!cn" "cn" -}}
+{{- range $n := list "private" "googlefcm" "youtube" "google" "douyin" "xiaohongshu" "bilibili" "steam@cn" "category-games@cn" "steam" "category-games-!cn" "github" "discord" "tiktok" "twitter" "netflix" "disney" "hbo" "primevideo" "bahamut" "spotify" "facebook" "category-ai-!cn" "paypal" "category-cryptocurrency" "category-speedtest@cn" "category-speedtest" "apple@cn" "microsoft@cn" "apple" "microsoft" "telegram" "geolocation-!cn" "cn" -}}
   {{- $ruleSets = append $ruleSets (dict "tag" (print "geosite-" $n) "type" "remote" "format" "binary" "url" (print $sb "/geo/geosite/" $n ".srs")) -}}
 {{- end -}}
 {{- range $n := list "google" "bilibili" "twitter" "netflix" "facebook" "apple" "telegram" "cn" -}}
@@ -624,6 +624,10 @@
       {
         "rule_set": "geosite-category-cryptocurrency",
         "outbound": "加密货币"
+      },
+      {
+        "rule_set": "geosite-category-speedtest@cn",
+        "outbound": "直连"
       },
       {
         "rule_set": "geosite-category-speedtest",
