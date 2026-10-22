@@ -43,7 +43,7 @@
 {{- end -}}
 
 {{- /* ---- 过滤 sing-box 1.11 可用节点, 并按 tag 去重 ---- */ -}}
-{{- $reserved := dict "总模式" true "ALL·延迟最低" true "ALL·其它地区" true "直连" true "ALL·日本地区" true "ALL·中国台湾" true "ALL·香港地区" true "ALL·美国地区" true "ALL·狮城地区" true "小红书" true "抖音" true "BiliBili" true "Steam" true "游戏平台" true "Apple" true "Microsoft" true "Telegram" true "Discord" true "Spotify" true "TikTok" true "YouTube" true "Netflix" true "Disney+" true "海外媒体" true "巴哈姆特" true "Google" true "GoogleFCM" true "Facebook" true "AI" true "GitHub" true "Twitter(X)" true "PayPal" true "加密货币" true "Speedtest" true "漏网之鱼" true -}}
+{{- $reserved := dict "🚀 总模式" true "⚡ ALL·延迟最低" true "🌐 ALL·其它地区" true "直连" true "🇯🇵 ALL·日本地区" true "🇹🇼 ALL·台湾地区" true "🇭🇰 ALL·香港地区" true "🇺🇸 ALL·美国地区" true "🇸🇬 ALL·狮城地区" true "📕 小红书" true "🎵 抖音" true "📺 BiliBili" true "🎮 Steam" true "🕹️ 游戏平台" true "🍎 Apple" true "🪟 Microsoft" true "✈️ Telegram" true "💬 Discord" true "🎧 Spotify" true "🎶 TikTok" true "▶️ YouTube" true "🎬 Netflix" true "🏰 Disney+" true "📡 海外媒体" true "🎌 巴哈姆特" true "🔍 Google" true "📮 GoogleFCM" true "👥 Facebook" true "🤖 AI" true "🐙 GitHub" true "🐦 Twitter(X)" true "💳 PayPal" true "🪙 加密货币" true "⏱️ Speedtest" true "🐟 漏网之鱼" true -}}
 {{- $seen := dict -}}
 {{- $supported := list -}}
 {{- range $p := $sorted -}}
@@ -236,14 +236,14 @@
   {{- $names = append $names $p.Name -}}
 {{- end -}}
 
-{{- /* ---- 策略组: 总模式 → 自动/地区组 → 直连 → 全部节点; 地区按节点名匹配, 无节点的地区不生成 ---- */ -}}
+{{- /* ---- 策略组: 🚀 总模式 → 自动/地区组 → 直连 → 全部节点; 地区按节点名匹配, 无节点的地区不生成 ---- */ -}}
 {{- $hasNodes := gt (len $names) 0 -}}
 {{- $regionDefs := list
-  (dict "name" "ALL·日本地区" "re" `(?i)(日本|川日|东京|大阪|泉日|埼玉|沪日|深日|[^-]日|jp|japan)`)
-  (dict "name" "ALL·中国台湾" "re" `(?i)(台|新北|彰化|tw|taiwan|taipei)`)
-  (dict "name" "ALL·香港地区" "re" `(?i)(港|hk|hong ?kong)`)
-  (dict "name" "ALL·美国地区" "re" `(?i)(美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|us|united ?states)`)
-  (dict "name" "ALL·狮城地区" "re" `(?i)(新加坡|坡|狮城|sg|singapore)`)
+  (dict "name" "🇯🇵 ALL·日本地区" "re" `(?i)(日本|川日|东京|大阪|泉日|埼玉|沪日|深日|[^-]日|jp|japan)`)
+  (dict "name" "🇹🇼 ALL·台湾地区" "re" `(?i)(台|新北|彰化|tw|taiwan|taipei)`)
+  (dict "name" "🇭🇰 ALL·香港地区" "re" `(?i)(港|hk|hong ?kong)`)
+  (dict "name" "🇺🇸 ALL·美国地区" "re" `(?i)(美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|us|united ?states)`)
+  (dict "name" "🇸🇬 ALL·狮城地区" "re" `(?i)(新加坡|坡|狮城|sg|singapore)`)
 -}}
 {{- $matched := dict -}}
 {{- $regionGroups := list -}}
@@ -264,42 +264,42 @@
   {{- if not (hasKey $matched $n) -}}{{- $others = append $others $n -}}{{- end -}}
 {{- end -}}
 {{- if $others -}}
-  {{- $regionGroups = append $regionGroups (dict "tag" "ALL·其它地区" "type" "urltest" "outbounds" $others "interval" "5m") -}}
+  {{- $regionGroups = append $regionGroups (dict "tag" "🌐 ALL·其它地区" "type" "urltest" "outbounds" $others "interval" "5m") -}}
 {{- end -}}
 {{- $autoTags := list -}}
-{{- if $hasNodes -}}{{- $autoTags = list "ALL·延迟最低" -}}{{- end -}}
+{{- if $hasNodes -}}{{- $autoTags = list "⚡ ALL·延迟最低" -}}{{- end -}}
 {{- range $g := $regionGroups -}}{{- $autoTags = append $autoTags $g.tag -}}{{- end -}}
-{{- $selectList := concat (list "总模式") $autoTags (list "直连") $names -}}
+{{- $selectList := concat (list "🚀 总模式") $autoTags (list "直连") $names -}}
 
 {{- $serviceDefs := list
-  (dict "name" "小红书" "prefer" "直连")
-  (dict "name" "抖音" "prefer" "直连")
-  (dict "name" "BiliBili" "prefer" "直连")
-  (dict "name" "Steam")
-  (dict "name" "游戏平台")
-  (dict "name" "Apple")
-  (dict "name" "Microsoft")
-  (dict "name" "Telegram")
-  (dict "name" "Discord")
-  (dict "name" "Spotify")
-  (dict "name" "TikTok")
-  (dict "name" "YouTube")
-  (dict "name" "Netflix")
-  (dict "name" "Disney+")
-  (dict "name" "海外媒体")
-  (dict "name" "巴哈姆特" "prefer" "ALL·中国台湾")
-  (dict "name" "Google")
-  (dict "name" "GoogleFCM")
-  (dict "name" "Facebook")
-  (dict "name" "AI")
-  (dict "name" "GitHub")
-  (dict "name" "Twitter(X)")
-  (dict "name" "PayPal")
-  (dict "name" "加密货币" "prefer" "ALL·中国台湾")
-  (dict "name" "Speedtest")
-  (dict "name" "漏网之鱼")
+  (dict "name" "📕 小红书" "prefer" "直连")
+  (dict "name" "🎵 抖音" "prefer" "直连")
+  (dict "name" "📺 BiliBili" "prefer" "直连")
+  (dict "name" "🎮 Steam")
+  (dict "name" "🕹️ 游戏平台")
+  (dict "name" "🍎 Apple")
+  (dict "name" "🪟 Microsoft")
+  (dict "name" "✈️ Telegram")
+  (dict "name" "💬 Discord")
+  (dict "name" "🎧 Spotify")
+  (dict "name" "🎶 TikTok")
+  (dict "name" "▶️ YouTube")
+  (dict "name" "🎬 Netflix")
+  (dict "name" "🏰 Disney+")
+  (dict "name" "📡 海外媒体")
+  (dict "name" "🎌 巴哈姆特" "prefer" "🇹🇼 ALL·台湾地区")
+  (dict "name" "🔍 Google")
+  (dict "name" "📮 GoogleFCM")
+  (dict "name" "👥 Facebook")
+  (dict "name" "🤖 AI")
+  (dict "name" "🐙 GitHub")
+  (dict "name" "🐦 Twitter(X)")
+  (dict "name" "💳 PayPal")
+  (dict "name" "🪙 加密货币" "prefer" "🇹🇼 ALL·台湾地区")
+  (dict "name" "⏱️ Speedtest")
+  (dict "name" "🐟 漏网之鱼")
 -}}
-{{- $groups := list (dict "tag" "总模式" "type" "selector" "outbounds" (concat $autoTags (list "直连"))) -}}
+{{- $groups := list (dict "tag" "🚀 总模式" "type" "selector" "outbounds" (concat $autoTags (list "直连"))) -}}
 {{- range $g := $serviceDefs -}}
   {{- $sel := dict "tag" $g.name "type" "selector" "outbounds" $selectList -}}
   {{- if and (hasKey $g "prefer") (has $g.prefer $selectList) -}}
@@ -308,7 +308,7 @@
   {{- $groups = append $groups $sel -}}
 {{- end -}}
 {{- if $hasNodes -}}
-  {{- $groups = append $groups (dict "tag" "ALL·延迟最低" "type" "urltest" "outbounds" $names "interval" "5m") -}}
+  {{- $groups = append $groups (dict "tag" "⚡ ALL·延迟最低" "type" "urltest" "outbounds" $names "interval" "5m") -}}
 {{- end -}}
 {{- $allOutbounds := concat $groups $regionGroups $nodeOutbounds (list (dict "tag" "直连" "type" "direct")) -}}
 
@@ -351,7 +351,7 @@
       {
         "tag": "google",
         "address": "https://8.8.8.8/dns-query",
-        "detour": "总模式"
+        "detour": "🚀 总模式"
       },
       {
         "tag": "ali",
@@ -438,7 +438,7 @@
   "outbounds": {{ toPrettyJson $allOutbounds }},
   "route": {
     "auto_detect_interface": true,
-    "final": "漏网之鱼",
+    "final": "🐟 漏网之鱼",
     "rules": [
       {
         "action": "sniff"
@@ -461,22 +461,22 @@
       },
       {
         "clash_mode": "Global",
-        "outbound": "总模式"
+        "outbound": "🚀 总模式"
       },
       {
         "rule_set": "geosite-googlefcm",
-        "outbound": "GoogleFCM"
+        "outbound": "📮 GoogleFCM"
       },
       {
         "rule_set": "geosite-youtube",
-        "outbound": "YouTube"
+        "outbound": "▶️ YouTube"
       },
       {
         "rule_set": [
           "geosite-google",
           "geoip-google"
         ],
-        "outbound": "Google"
+        "outbound": "🔍 Google"
       },
       {
         "rule_set": "ads",
@@ -484,18 +484,18 @@
       },
       {
         "rule_set": "geosite-douyin",
-        "outbound": "抖音"
+        "outbound": "🎵 抖音"
       },
       {
         "rule_set": "geosite-xiaohongshu",
-        "outbound": "小红书"
+        "outbound": "📕 小红书"
       },
       {
         "rule_set": [
           "geosite-bilibili",
           "geoip-bilibili"
         ],
-        "outbound": "BiliBili"
+        "outbound": "📺 BiliBili"
       },
       {
         "rule_set": [
@@ -506,75 +506,75 @@
       },
       {
         "rule_set": "geosite-steam",
-        "outbound": "Steam"
+        "outbound": "🎮 Steam"
       },
       {
         "rule_set": "geosite-category-games-!cn",
-        "outbound": "游戏平台"
+        "outbound": "🕹️ 游戏平台"
       },
       {
         "rule_set": "geosite-github",
-        "outbound": "GitHub"
+        "outbound": "🐙 GitHub"
       },
       {
         "rule_set": "geosite-discord",
-        "outbound": "Discord"
+        "outbound": "💬 Discord"
       },
       {
         "rule_set": "geosite-tiktok",
-        "outbound": "TikTok"
+        "outbound": "🎶 TikTok"
       },
       {
         "rule_set": [
           "geosite-twitter",
           "geoip-twitter"
         ],
-        "outbound": "Twitter(X)"
+        "outbound": "🐦 Twitter(X)"
       },
       {
         "rule_set": [
           "geosite-netflix",
           "geoip-netflix"
         ],
-        "outbound": "Netflix"
+        "outbound": "🎬 Netflix"
       },
       {
         "rule_set": "geosite-disney",
-        "outbound": "Disney+"
+        "outbound": "🏰 Disney+"
       },
       {
         "rule_set": [
           "geosite-hbo",
           "geosite-primevideo"
         ],
-        "outbound": "海外媒体"
+        "outbound": "📡 海外媒体"
       },
       {
         "rule_set": "geosite-bahamut",
-        "outbound": "巴哈姆特"
+        "outbound": "🎌 巴哈姆特"
       },
       {
         "rule_set": "geosite-spotify",
-        "outbound": "Spotify"
+        "outbound": "🎧 Spotify"
       },
       {
         "rule_set": [
           "geosite-facebook",
           "geoip-facebook"
         ],
-        "outbound": "Facebook"
+        "outbound": "👥 Facebook"
       },
       {
         "rule_set": "geosite-category-ai-!cn",
-        "outbound": "AI"
+        "outbound": "🤖 AI"
       },
       {
         "rule_set": "geosite-paypal",
-        "outbound": "PayPal"
+        "outbound": "💳 PayPal"
       },
       {
         "rule_set": "geosite-category-cryptocurrency",
-        "outbound": "加密货币"
+        "outbound": "🪙 加密货币"
       },
       {
         "rule_set": "geosite-category-speedtest@cn",
@@ -582,7 +582,7 @@
       },
       {
         "rule_set": "geosite-category-speedtest",
-        "outbound": "Speedtest"
+        "outbound": "⏱️ Speedtest"
       },
       {
         "rule_set": [
@@ -596,22 +596,22 @@
           "geosite-apple",
           "geoip-apple"
         ],
-        "outbound": "Apple"
+        "outbound": "🍎 Apple"
       },
       {
         "rule_set": "geosite-microsoft",
-        "outbound": "Microsoft"
+        "outbound": "🪟 Microsoft"
       },
       {
         "rule_set": [
           "geosite-telegram",
           "geoip-telegram"
         ],
-        "outbound": "Telegram"
+        "outbound": "✈️ Telegram"
       },
       {
         "rule_set": "geosite-geolocation-!cn",
-        "outbound": "总模式"
+        "outbound": "🚀 总模式"
       },
       {
         "rule_set": [
