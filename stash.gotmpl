@@ -59,11 +59,11 @@
 {{- $q := "https://cdn.jsdmirror.com/gh/Koolson/Qure@master/IconSet/Color/" -}}
 {{- $s := "https://cdn.jsdmirror.com/gh/GitMetaio/Surfing@main/app/icon/" -}}
 {{- $regionDefs := list
-  (dict "name" "ALL·日本地区" "icon" (print $q "Japan.png") "re" `(?i)(日本|川日|东京|大阪|泉日|埼玉|沪日|深日|[^-]日|jp|japan)`)
-  (dict "name" "ALL·中国台湾" "icon" (print $q "Taiwan.png") "re" `(?i)(台|新北|彰化|tw|taiwan|taipei)`)
-  (dict "name" "ALL·香港地区" "icon" (print $q "Hong_Kong.png") "re" `(?i)(港|hk|hong ?kong)`)
-  (dict "name" "ALL·美国地区" "icon" (print $q "United_States.png") "re" `(?i)(美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|us|united ?states)`)
-  (dict "name" "ALL·狮城地区" "icon" (print $q "Singapore.png") "re" `(?i)(新加坡|坡|狮城|sg|singapore)`)
+  (dict "name" "🇯🇵 ALL·日本地区" "icon" (print $q "Japan.png") "re" `(?i)(日本|川日|东京|大阪|泉日|埼玉|沪日|深日|[^-]日|jp|japan)`)
+  (dict "name" "🇹🇼 ALL·台湾地区" "icon" (print $q "Taiwan.png") "re" `(?i)(台|新北|彰化|tw|taiwan|taipei)`)
+  (dict "name" "🇭🇰 ALL·香港地区" "icon" (print $q "Hong_Kong.png") "re" `(?i)(港|hk|hong ?kong)`)
+  (dict "name" "🇺🇸 ALL·美国地区" "icon" (print $q "United_States.png") "re" `(?i)(美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|us|united ?states)`)
+  (dict "name" "🇸🇬 ALL·狮城地区" "icon" (print $q "Singapore.png") "re" `(?i)(新加坡|坡|狮城|sg|singapore)`)
 -}}
 {{- $matched := dict -}}
 {{- $regionGroups := list -}}
@@ -86,7 +86,7 @@
   {{- end -}}
 {{- end -}}
 {{- if $others -}}
-  {{- $regionGroups = append $regionGroups (dict "name" "ALL·其它地区" "icon" (print $q "World_Map.png") "proxies" $others) -}}
+  {{- $regionGroups = append $regionGroups (dict "name" "🌐 ALL·其它地区" "icon" (print $q "World_Map.png") "proxies" $others) -}}
 {{- end -}}
 
 {{- $allNames := list -}}
@@ -95,39 +95,39 @@
 {{- end -}}
 
 {{- /* 策略组通用候选：总模式 → 自动组 → 地区组 → 拒绝/直连 → 全部节点 */ -}}
-{{- $selectList := list "总模式" "ALL·延迟最低" "ALL·负载均衡" "ALL·故障转移" -}}
+{{- $selectList := list "🚀 总模式" "⚡ ALL·延迟最低" "⚖️ ALL·负载均衡" "🔁 ALL·故障转移" -}}
 {{- range $g := $regionGroups -}}
   {{- $selectList = append $selectList $g.name -}}
 {{- end -}}
 {{- $selectList = concat $selectList (list "⛔️ 禁止·拒绝连接" "🌐 本机·本地直连") $allNames -}}
 {{- /* 国内应用默认直连 */ -}}
 {{- $serviceGroups := list
-  (dict "name" "小红书" "icon" (print $s "XiaoHongShu.svg") "prefer" "🌐 本机·本地直连")
-  (dict "name" "抖音" "icon" (print $s "DouYin.svg") "prefer" "🌐 本机·本地直连")
-  (dict "name" "BiliBili" "icon" (print $q "bilibili.png") "prefer" "🌐 本机·本地直连")
-  (dict "name" "Steam" "icon" (print $q "Steam.png"))
-  (dict "name" "游戏平台" "icon" (print $q "Game.png"))
-  (dict "name" "Apple" "icon" (print $q "Apple.png"))
-  (dict "name" "Microsoft" "icon" (print $q "Microsoft.png"))
-  (dict "name" "Telegram" "icon" (print $q "Telegram.png"))
-  (dict "name" "Discord" "icon" (print $q "Discord.png"))
-  (dict "name" "Spotify" "icon" (print $q "Spotify.png"))
-  (dict "name" "TikTok" "icon" (print $q "TikTok.png"))
-  (dict "name" "YouTube" "icon" (print $q "YouTube.png"))
-  (dict "name" "Netflix" "icon" (print $q "Netflix.png"))
-  (dict "name" "Disney+" "icon" (print $q "Disney+.png"))
-  (dict "name" "海外媒体" "icon" (print $q "ForeignMedia.png"))
-  (dict "name" "巴哈姆特" "icon" (print $q "Bahamut.png") "prefer" "ALL·中国台湾")
-  (dict "name" "Google" "icon" (print $q "Google_Search.png"))
-  (dict "name" "GoogleFCM" "icon" (print $s "GoogleFCM.svg"))
-  (dict "name" "Facebook" "icon" (print $q "Facebook.png"))
-  (dict "name" "AI" "icon" (print $q "AI.png"))
-  (dict "name" "GitHub" "icon" (print $q "GitHub.png"))
-  (dict "name" "Twitter(X)" "icon" (print $q "X.png"))
-  (dict "name" "PayPal" "icon" (print $q "PayPal.png"))
-  (dict "name" "加密货币" "icon" (print $q "Cryptocurrency.png") "prefer" "ALL·中国台湾")
-  (dict "name" "Speedtest" "icon" (print $q "Speedtest.png"))
-  (dict "name" "漏网之鱼" "icon" (print $q "Final.png"))
+  (dict "name" "📕 小红书" "icon" (print $s "XiaoHongShu.svg") "prefer" "🌐 本机·本地直连")
+  (dict "name" "🎵 抖音" "icon" (print $s "DouYin.svg") "prefer" "🌐 本机·本地直连")
+  (dict "name" "📺 BiliBili" "icon" (print $q "bilibili.png") "prefer" "🌐 本机·本地直连")
+  (dict "name" "🎮 Steam" "icon" (print $q "Steam.png"))
+  (dict "name" "🕹️ 游戏平台" "icon" (print $q "Game.png"))
+  (dict "name" "🍎 Apple" "icon" (print $q "Apple.png"))
+  (dict "name" "🪟 Microsoft" "icon" (print $q "Microsoft.png"))
+  (dict "name" "✈️ Telegram" "icon" (print $q "Telegram.png"))
+  (dict "name" "💬 Discord" "icon" (print $q "Discord.png"))
+  (dict "name" "🎧 Spotify" "icon" (print $q "Spotify.png"))
+  (dict "name" "🎶 TikTok" "icon" (print $q "TikTok.png"))
+  (dict "name" "▶️ YouTube" "icon" (print $q "YouTube.png"))
+  (dict "name" "🎬 Netflix" "icon" (print $q "Netflix.png"))
+  (dict "name" "🏰 Disney+" "icon" (print $q "Disney+.png"))
+  (dict "name" "📡 海外媒体" "icon" (print $q "ForeignMedia.png"))
+  (dict "name" "🎌 巴哈姆特" "icon" (print $q "Bahamut.png") "prefer" "🇹🇼 ALL·台湾地区")
+  (dict "name" "🔍 Google" "icon" (print $q "Google_Search.png"))
+  (dict "name" "📮 GoogleFCM" "icon" (print $s "GoogleFCM.svg"))
+  (dict "name" "👥 Facebook" "icon" (print $q "Facebook.png"))
+  (dict "name" "🤖 AI" "icon" (print $q "AI.png"))
+  (dict "name" "🐙 GitHub" "icon" (print $q "GitHub.png"))
+  (dict "name" "🐦 Twitter(X)" "icon" (print $q "X.png"))
+  (dict "name" "💳 PayPal" "icon" (print $q "PayPal.png"))
+  (dict "name" "🪙 加密货币" "icon" (print $q "Cryptocurrency.png") "prefer" "🇹🇼 ALL·台湾地区")
+  (dict "name" "⏱️ Speedtest" "icon" (print $q "Speedtest.png"))
+  (dict "name" "🐟 漏网之鱼" "icon" (print $q "Final.png"))
 -}}
 
 # {{ .SiteName }}-{{ .SubscribeName }}
@@ -190,13 +190,13 @@ proxies:
 {{- end }}
 
 proxy-groups:
-  - name: 总模式
+  - name: 🚀 总模式
     icon: {{ $q }}Proxy.png
     type: select
     proxies:
-      - ALL·延迟最低
-      - ALL·负载均衡
-      - ALL·故障转移
+      - ⚡ ALL·延迟最低
+      - ⚖️ ALL·负载均衡
+      - 🔁 ALL·故障转移
       {{- range $g := $regionGroups }}
       - {{ $g.name }}
       {{- end }}
@@ -214,7 +214,7 @@ proxy-groups:
       - {{ $n | quote }}
       {{- end }}
 {{- end }}
-  - name: 广告拦截
+  - name: 🛡️ 广告拦截
     icon: {{ $q }}Advertising.png
     type: select
     proxies:
@@ -230,7 +230,7 @@ proxy-groups:
     type: select
     proxies:
       - REJECT
-  - name: ALL·延迟最低
+  - name: ⚡ ALL·延迟最低
     icon: {{ $q }}Auto.png
     type: url-test
     url: http://www.gstatic.com/generate_204
@@ -239,7 +239,7 @@ proxy-groups:
       {{- range $n := $allNames }}
       - {{ $n | quote }}
       {{- end }}
-  - name: ALL·负载均衡
+  - name: ⚖️ ALL·负载均衡
     icon: {{ $q }}Round_Robin.png
     type: load-balance
     strategy: round-robin
@@ -249,7 +249,7 @@ proxy-groups:
       {{- range $n := $allNames }}
       - {{ $n | quote }}
       {{- end }}
-  - name: ALL·故障转移
+  - name: 🔁 ALL·故障转移
     icon: {{ $q }}Available.png
     type: fallback
     url: http://www.gstatic.com/generate_204
@@ -272,35 +272,35 @@ proxy-groups:
 
 rules:
   - RULE-SET,Lan,🌐 本机·本地直连
-  - RULE-SET,GoogleFCM,GoogleFCM
-  - RULE-SET,YouTube,YouTube
-  - RULE-SET,Google,Google
-  - RULE-SET,AdvertisingLite,广告拦截
-  - RULE-SET,DouYin,抖音
-  - RULE-SET,XiaoHongShu,小红书
-  - RULE-SET,BiliBili,BiliBili
-  # Steam 国内 CDN 下载直连，商店与登录仍走 Steam 组
+  - RULE-SET,📮 GoogleFCM,📮 GoogleFCM
+  - RULE-SET,▶️ YouTube,▶️ YouTube
+  - RULE-SET,🔍 Google,🔍 Google
+  - RULE-SET,AdvertisingLite,🛡️ 广告拦截
+  - RULE-SET,DouYin,🎵 抖音
+  - RULE-SET,XiaoHongShu,📕 小红书
+  - RULE-SET,📺 BiliBili,📺 BiliBili
+  # 🎮 Steam 国内 CDN 下载直连，商店与登录仍走 🎮 Steam 组
   - RULE-SET,SteamCN,🌐 本机·本地直连
-  - RULE-SET,Steam,Steam
-  - RULE-SET,Game,游戏平台
-  - RULE-SET,GitHub,GitHub
-  - RULE-SET,Discord,Discord
-  - RULE-SET,TikTok,TikTok
-  - RULE-SET,Twitter,Twitter(X)
-  - RULE-SET,Netflix,Netflix
-  - RULE-SET,Disney,Disney+
-  - RULE-SET,HBO,海外媒体
-  - RULE-SET,PrimeVideo,海外媒体
-  - RULE-SET,Bahamut,巴哈姆特
-  - RULE-SET,Spotify,Spotify
-  - RULE-SET,Facebook,Facebook
-  - RULE-SET,OpenAI,AI
-  - RULE-SET,Claude,AI
-  - RULE-SET,Gemini,AI
-  - RULE-SET,Copilot,AI
-  - RULE-SET,PayPal,PayPal
-  - RULE-SET,Cryptocurrency,加密货币
-  # 国内测速站直连测本地宽带，其余测速站走 Speedtest 组（fast.com 随 Netflix）
+  - RULE-SET,🎮 Steam,🎮 Steam
+  - RULE-SET,Game,🕹️ 游戏平台
+  - RULE-SET,🐙 GitHub,🐙 GitHub
+  - RULE-SET,💬 Discord,💬 Discord
+  - RULE-SET,🎶 TikTok,🎶 TikTok
+  - RULE-SET,Twitter,🐦 Twitter(X)
+  - RULE-SET,🎬 Netflix,🎬 Netflix
+  - RULE-SET,Disney,🏰 Disney+
+  - RULE-SET,HBO,📡 海外媒体
+  - RULE-SET,PrimeVideo,📡 海外媒体
+  - RULE-SET,Bahamut,🎌 巴哈姆特
+  - RULE-SET,🎧 Spotify,🎧 Spotify
+  - RULE-SET,👥 Facebook,👥 Facebook
+  - RULE-SET,OpenAI,🤖 AI
+  - RULE-SET,Claude,🤖 AI
+  - RULE-SET,Gemini,🤖 AI
+  - RULE-SET,Copilot,🤖 AI
+  - RULE-SET,💳 PayPal,💳 PayPal
+  - RULE-SET,Cryptocurrency,🪙 加密货币
+  # 国内测速站直连测本地宽带，其余测速站走 ⏱️ Speedtest 组（fast.com 随 Netflix）
   - DOMAIN-SUFFIX,speedtest.cn,🌐 本机·本地直连
   - DOMAIN-SUFFIX,cnspeedtest.cn,🌐 本机·本地直连
   - DOMAIN-SUFFIX,speedtest.mfcyun.com,🌐 本机·本地直连
@@ -309,63 +309,63 @@ rules:
   - DOMAIN-SUFFIX,test.ustc.edu.cn,🌐 本机·本地直连
   - DOMAIN-SUFFIX,speedtest.shu.edu.cn,🌐 本机·本地直连
   - DOMAIN-SUFFIX,speed.neu6.edu.cn,🌐 本机·本地直连
-  - RULE-SET,Speedtest,Speedtest
-  - DOMAIN-SUFFIX,speed.cloudflare.com,Speedtest
-  - DOMAIN-SUFFIX,librespeed.org,Speedtest
-  - DOMAIN-SUFFIX,nperf.com,Speedtest
-  - DOMAIN-SUFFIX,openspeedtest.com,Speedtest
-  - DOMAIN-SUFFIX,speedof.me,Speedtest
-  - DOMAIN-SUFFIX,testmy.net,Speedtest
-  - DOMAIN-SUFFIX,measurementlab.net,Speedtest
-  - DOMAIN-SUFFIX,speedcheck.org,Speedtest
-  - DOMAIN-SUFFIX,fastspeedtest.com,Speedtest
-  - DOMAIN-SUFFIX,meter.net,Speedtest
-  - DOMAIN-SUFFIX,wifiman.me,Speedtest
-  - DOMAIN-SUFFIX,speedtest.org,Speedtest
-  - RULE-SET,Apple,Apple
-  - RULE-SET,Microsoft,Microsoft
-  - RULE-SET,Telegram,Telegram
-  - RULE-SET,Global,总模式
+  - RULE-SET,⏱️ Speedtest,⏱️ Speedtest
+  - DOMAIN-SUFFIX,speed.cloudflare.com,⏱️ Speedtest
+  - DOMAIN-SUFFIX,librespeed.org,⏱️ Speedtest
+  - DOMAIN-SUFFIX,nperf.com,⏱️ Speedtest
+  - DOMAIN-SUFFIX,openspeedtest.com,⏱️ Speedtest
+  - DOMAIN-SUFFIX,speedof.me,⏱️ Speedtest
+  - DOMAIN-SUFFIX,testmy.net,⏱️ Speedtest
+  - DOMAIN-SUFFIX,measurementlab.net,⏱️ Speedtest
+  - DOMAIN-SUFFIX,speedcheck.org,⏱️ Speedtest
+  - DOMAIN-SUFFIX,fastspeedtest.com,⏱️ Speedtest
+  - DOMAIN-SUFFIX,meter.net,⏱️ Speedtest
+  - DOMAIN-SUFFIX,wifiman.me,⏱️ Speedtest
+  - DOMAIN-SUFFIX,speedtest.org,⏱️ Speedtest
+  - RULE-SET,🍎 Apple,🍎 Apple
+  - RULE-SET,🪟 Microsoft,🪟 Microsoft
+  - RULE-SET,✈️ Telegram,✈️ Telegram
+  - RULE-SET,Global,🚀 总模式
   - RULE-SET,ChinaMax,🌐 本机·本地直连
   - GEOIP,CN,🌐 本机·本地直连
-  - MATCH,漏网之鱼
+  - MATCH,🐟 漏网之鱼
 
 # 规则来源: blackmatrix7/ios_rule_script（perfect-panel/rules 镜像）
 rule-providers:
 {{- $rp := "https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash" -}}
 {{- $rules := list
   (list "Lan" "Lan/Lan_No_Resolve")
-  (list "GoogleFCM" "GoogleFCM/GoogleFCM_No_Resolve")
-  (list "YouTube" "YouTube/YouTube_No_Resolve")
-  (list "Google" "Google/Google_No_Resolve")
+  (list "📮 GoogleFCM" "GoogleFCM/GoogleFCM_No_Resolve")
+  (list "▶️ YouTube" "YouTube/YouTube_No_Resolve")
+  (list "🔍 Google" "Google/Google_No_Resolve")
   (list "AdvertisingLite" "AdvertisingLite/AdvertisingLite_Classical_No_Resolve")
   (list "DouYin" "DouYin/DouYin_No_Resolve")
   (list "XiaoHongShu" "XiaoHongShu/XiaoHongShu_No_Resolve")
-  (list "BiliBili" "BiliBili/BiliBili_No_Resolve")
+  (list "📺 BiliBili" "BiliBili/BiliBili_No_Resolve")
   (list "SteamCN" "SteamCN/SteamCN_No_Resolve")
-  (list "Steam" "Steam/Steam_No_Resolve")
+  (list "🎮 Steam" "Steam/Steam_No_Resolve")
   (list "Game" "Game/Game_No_Resolve")
-  (list "GitHub" "GitHub/GitHub_No_Resolve")
-  (list "Discord" "Discord/Discord_No_Resolve")
-  (list "TikTok" "TikTok/TikTok_No_Resolve")
+  (list "🐙 GitHub" "GitHub/GitHub_No_Resolve")
+  (list "💬 Discord" "Discord/Discord_No_Resolve")
+  (list "🎶 TikTok" "TikTok/TikTok_No_Resolve")
   (list "Twitter" "Twitter/Twitter_No_Resolve")
-  (list "Netflix" "Netflix/Netflix_Classical_No_Resolve")
+  (list "🎬 Netflix" "Netflix/Netflix_Classical_No_Resolve")
   (list "Disney" "Disney/Disney_No_Resolve")
   (list "HBO" "HBO/HBO_No_Resolve")
   (list "PrimeVideo" "PrimeVideo/PrimeVideo_No_Resolve")
   (list "Bahamut" "Bahamut/Bahamut_No_Resolve")
-  (list "Spotify" "Spotify/Spotify_No_Resolve")
-  (list "Facebook" "Facebook/Facebook_No_Resolve")
+  (list "🎧 Spotify" "Spotify/Spotify_No_Resolve")
+  (list "👥 Facebook" "Facebook/Facebook_No_Resolve")
   (list "OpenAI" "OpenAI/OpenAI_No_Resolve")
   (list "Claude" "Claude/Claude_No_Resolve")
   (list "Gemini" "Gemini/Gemini_No_Resolve")
   (list "Copilot" "Copilot/Copilot_No_Resolve")
-  (list "PayPal" "PayPal/PayPal_No_Resolve")
+  (list "💳 PayPal" "PayPal/PayPal_No_Resolve")
   (list "Cryptocurrency" "Cryptocurrency/Cryptocurrency_No_Resolve")
-  (list "Speedtest" "Speedtest/Speedtest_No_Resolve")
-  (list "Apple" "Apple/Apple_Classical_No_Resolve")
-  (list "Microsoft" "Microsoft/Microsoft_No_Resolve")
-  (list "Telegram" "Telegram/Telegram_No_Resolve")
+  (list "⏱️ Speedtest" "Speedtest/Speedtest_No_Resolve")
+  (list "🍎 Apple" "Apple/Apple_Classical_No_Resolve")
+  (list "🪟 Microsoft" "Microsoft/Microsoft_No_Resolve")
+  (list "✈️ Telegram" "Telegram/Telegram_No_Resolve")
   (list "Global" "Global/Global_Classical_No_Resolve")
   (list "ChinaMax" "ChinaMax/ChinaMax_Classical_No_Resolve")
 }}

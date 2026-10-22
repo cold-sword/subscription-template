@@ -61,11 +61,11 @@
 {{- $q := "https://cdn.jsdmirror.com/gh/Koolson/Qure@master/IconSet/Color/" -}}
 {{- $s := "https://cdn.jsdmirror.com/gh/GitMetaio/Surfing@main/app/icon/" -}}
 {{- $regionDefs := list
-  (dict "name" "ALL·日本地区" "icon" (print $q "Japan.png") "re" `(?i)(日本|川日|东京|大阪|泉日|埼玉|沪日|深日|[^-]日|jp|japan)`)
-  (dict "name" "ALL·中国台湾" "icon" (print $q "Taiwan.png") "re" `(?i)(台|新北|彰化|tw|taiwan|taipei)`)
-  (dict "name" "ALL·香港地区" "icon" (print $q "Hong_Kong.png") "re" `(?i)(港|hk|hong ?kong)`)
-  (dict "name" "ALL·美国地区" "icon" (print $q "United_States.png") "re" `(?i)(美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|us|united ?states)`)
-  (dict "name" "ALL·狮城地区" "icon" (print $q "Singapore.png") "re" `(?i)(新加坡|坡|狮城|sg|singapore)`)
+  (dict "name" "🇯🇵 ALL·日本地区" "icon" (print $q "Japan.png") "re" `(?i)(日本|川日|东京|大阪|泉日|埼玉|沪日|深日|[^-]日|jp|japan)`)
+  (dict "name" "🇹🇼 ALL·台湾地区" "icon" (print $q "Taiwan.png") "re" `(?i)(台|新北|彰化|tw|taiwan|taipei)`)
+  (dict "name" "🇭🇰 ALL·香港地区" "icon" (print $q "Hong_Kong.png") "re" `(?i)(港|hk|hong ?kong)`)
+  (dict "name" "🇺🇸 ALL·美国地区" "icon" (print $q "United_States.png") "re" `(?i)(美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|us|united ?states)`)
+  (dict "name" "🇸🇬 ALL·狮城地区" "icon" (print $q "Singapore.png") "re" `(?i)(新加坡|坡|狮城|sg|singapore)`)
 -}}
 {{- $matched := dict -}}
 {{- $regionGroups := list -}}
@@ -88,7 +88,7 @@
   {{- end -}}
 {{- end -}}
 {{- if $others -}}
-  {{- $regionGroups = append $regionGroups (dict "name" "ALL·其它地区" "icon" (print $q "World_Map.png") "proxies" $others) -}}
+  {{- $regionGroups = append $regionGroups (dict "name" "🌐 ALL·其它地区" "icon" (print $q "World_Map.png") "proxies" $others) -}}
 {{- end -}}
 
 {{- $allNames := list -}}
@@ -97,40 +97,40 @@
 {{- end -}}
 
 {{- /* 策略组通用候选：总模式 → 自动组 → 地区组 → 拒绝/直连 → 全部节点 */ -}}
-{{- $selectList := list "总模式" "ALL·延迟最低" "ALL·负载均衡" "ALL·故障转移" -}}
+{{- $selectList := list "🚀 总模式" "⚡ ALL·延迟最低" "⚖️ ALL·负载均衡" "🔁 ALL·故障转移" -}}
 {{- range $g := $regionGroups -}}
   {{- $selectList = append $selectList $g.name -}}
 {{- end -}}
 {{- $selectList = concat $selectList (list "⛔️ 禁止·拒绝连接" "🌐 本机·本地直连") $allNames -}}
 {{- /* 国内应用默认直连 */ -}}
 {{- $serviceGroups := list
-  (dict "name" "小红书" "icon" (print $s "XiaoHongShu.svg") "prefer" "🌐 本机·本地直连")
-  (dict "name" "抖音" "icon" (print $s "DouYin.svg") "prefer" "🌐 本机·本地直连")
-  (dict "name" "BiliBili" "icon" (print $q "bilibili.png") "prefer" "🌐 本机·本地直连")
-  (dict "name" "Steam" "icon" (print $q "Steam.png"))
-  (dict "name" "游戏平台" "icon" (print $q "Game.png"))
-  (dict "name" "Apple" "icon" (print $q "Apple.png"))
-  (dict "name" "Microsoft" "icon" (print $q "Microsoft.png"))
-  (dict "name" "Telegram" "icon" (print $q "Telegram.png"))
-  (dict "name" "Discord" "icon" (print $q "Discord.png"))
-  (dict "name" "Spotify" "icon" (print $q "Spotify.png"))
-  (dict "name" "TikTok" "icon" (print $q "TikTok.png"))
-  (dict "name" "YouTube" "icon" (print $q "YouTube.png"))
-  (dict "name" "Netflix" "icon" (print $q "Netflix.png"))
-  (dict "name" "Disney+" "icon" (print $q "Disney+.png"))
-  (dict "name" "海外媒体" "icon" (print $q "ForeignMedia.png"))
-  (dict "name" "巴哈姆特" "icon" (print $q "Bahamut.png") "prefer" "ALL·中国台湾")
-  (dict "name" "Google" "icon" (print $q "Google_Search.png"))
-  (dict "name" "GoogleFCM" "icon" (print $s "GoogleFCM.svg"))
-  (dict "name" "Facebook" "icon" (print $q "Facebook.png"))
-  (dict "name" "AI" "icon" (print $q "AI.png"))
-  (dict "name" "GitHub" "icon" (print $q "GitHub.png"))
-  (dict "name" "Twitter(X)" "icon" (print $q "X.png"))
-  (dict "name" "PayPal" "icon" (print $q "PayPal.png"))
-  (dict "name" "加密货币" "icon" (print $q "Cryptocurrency.png") "prefer" "ALL·中国台湾")
-  (dict "name" "Speedtest" "icon" (print $q "Speedtest.png"))
-  (dict "name" "DNS连接" "icon" (print $s "DNS.svg"))
-  (dict "name" "漏网之鱼" "icon" (print $q "Final.png"))
+  (dict "name" "📕 小红书" "icon" (print $s "XiaoHongShu.svg") "prefer" "🌐 本机·本地直连")
+  (dict "name" "🎵 抖音" "icon" (print $s "DouYin.svg") "prefer" "🌐 本机·本地直连")
+  (dict "name" "📺 BiliBili" "icon" (print $q "bilibili.png") "prefer" "🌐 本机·本地直连")
+  (dict "name" "🎮 Steam" "icon" (print $q "Steam.png"))
+  (dict "name" "🕹️ 游戏平台" "icon" (print $q "Game.png"))
+  (dict "name" "🍎 Apple" "icon" (print $q "Apple.png"))
+  (dict "name" "🪟 Microsoft" "icon" (print $q "Microsoft.png"))
+  (dict "name" "✈️ Telegram" "icon" (print $q "Telegram.png"))
+  (dict "name" "💬 Discord" "icon" (print $q "Discord.png"))
+  (dict "name" "🎧 Spotify" "icon" (print $q "Spotify.png"))
+  (dict "name" "🎶 TikTok" "icon" (print $q "TikTok.png"))
+  (dict "name" "▶️ YouTube" "icon" (print $q "YouTube.png"))
+  (dict "name" "🎬 Netflix" "icon" (print $q "Netflix.png"))
+  (dict "name" "🏰 Disney+" "icon" (print $q "Disney+.png"))
+  (dict "name" "📡 海外媒体" "icon" (print $q "ForeignMedia.png"))
+  (dict "name" "🎌 巴哈姆特" "icon" (print $q "Bahamut.png") "prefer" "🇹🇼 ALL·台湾地区")
+  (dict "name" "🔍 Google" "icon" (print $q "Google_Search.png"))
+  (dict "name" "📮 GoogleFCM" "icon" (print $s "GoogleFCM.svg"))
+  (dict "name" "👥 Facebook" "icon" (print $q "Facebook.png"))
+  (dict "name" "🤖 AI" "icon" (print $q "AI.png"))
+  (dict "name" "🐙 GitHub" "icon" (print $q "GitHub.png"))
+  (dict "name" "🐦 Twitter(X)" "icon" (print $q "X.png"))
+  (dict "name" "💳 PayPal" "icon" (print $q "PayPal.png"))
+  (dict "name" "🪙 加密货币" "icon" (print $q "Cryptocurrency.png") "prefer" "🇹🇼 ALL·台湾地区")
+  (dict "name" "⏱️ Speedtest" "icon" (print $q "Speedtest.png"))
+  (dict "name" "🧭 DNS连接" "icon" (print $s "DNS.svg"))
+  (dict "name" "🐟 漏网之鱼" "icon" (print $q "Final.png"))
 -}}
 
 # {{ .SiteName }}-{{ .SubscribeName }}
@@ -239,10 +239,10 @@ dns:
       - 'https://223.5.5.5:443/dns-query#🌐 本机·本地直连&h3=true'
       - 'https://223.6.6.6:443/dns-query#🌐 本机·本地直连&h3=true'
   nameserver:
-    - 'https://8.8.8.8:443/dns-query#DNS连接&h3=true'
-    - 'https://8.8.4.4:443/dns-query#DNS连接&h3=true'
-    - 'https://1.1.1.1:443/dns-query#DNS连接&h3=false'
-    - 'https://1.0.0.1:443/dns-query#DNS连接&h3=false'
+    - 'https://8.8.8.8:443/dns-query#🧭 DNS连接&h3=true'
+    - 'https://8.8.4.4:443/dns-query#🧭 DNS连接&h3=true'
+    - 'https://1.1.1.1:443/dns-query#🧭 DNS连接&h3=false'
+    - 'https://1.0.0.1:443/dns-query#🧭 DNS连接&h3=false'
   # 直连流量的解析：国内 DoH，防运营商劫持，CDN 就近
   direct-nameserver:
     - 'https://1.12.12.12:443/dns-query#🌐 本机·本地直连&h3=false'
@@ -691,13 +691,13 @@ proxies:
 {{- end }}
 
 proxy-groups:
-  - name: 总模式
+  - name: 🚀 总模式
     icon: {{ $q }}Proxy.png
     type: select
     proxies:
-      - ALL·延迟最低
-      - ALL·负载均衡
-      - ALL·故障转移
+      - ⚡ ALL·延迟最低
+      - ⚖️ ALL·负载均衡
+      - 🔁 ALL·故障转移
       {{- range $g := $regionGroups }}
       - {{ $g.name }}
       {{- end }}
@@ -715,7 +715,7 @@ proxy-groups:
       - {{ $n | quote }}
       {{- end }}
 {{- end }}
-  - name: 广告拦截
+  - name: 🛡️ 广告拦截
     icon: {{ $q }}Advertising.png
     type: select
     proxies:
@@ -723,7 +723,7 @@ proxy-groups:
       - PASS
       - REJECT-DROP
       - 🌐 DNS_Hijack
-  - name: WebRTC
+  - name: 📞 WebRTC
     icon: {{ $s }}WebRTC.svg
     type: select
     proxies:
@@ -731,7 +731,7 @@ proxy-groups:
       - ⛔️ 禁止·拒绝连接
       - 🌐 DNS_Hijack
       - REJECT-DROP
-  - name: ALL·延迟最低
+  - name: ⚡ ALL·延迟最低
     icon: {{ $q }}Auto.png
     type: url-test
     url: https://www.gstatic.com/generate_204
@@ -741,7 +741,7 @@ proxy-groups:
       {{- range $n := $allNames }}
       - {{ $n | quote }}
       {{- end }}
-  - name: ALL·负载均衡
+  - name: ⚖️ ALL·负载均衡
     icon: {{ $q }}Round_Robin.png
     type: load-balance
     strategy: round-robin
@@ -752,7 +752,7 @@ proxy-groups:
       {{- range $n := $allNames }}
       - {{ $n | quote }}
       {{- end }}
-  - name: ALL·故障转移
+  - name: 🔁 ALL·故障转移
     icon: {{ $q }}Available.png
     type: fallback
     url: https://www.gstatic.com/generate_204
@@ -852,54 +852,54 @@ rules:
   - RULE-SET,Private_域,🌐 本机·本地直连
   - RULE-SET,Private_IP,🌐 本机·本地直连,no-resolve
   - DST-PORT,53,🌐 DNS_Hijack
-  - DST-PORT,853,DNS连接
-  - RULE-SET,WebRTC_端/域,WebRTC
-  - RULE-SET,GoogleFCM_域,GoogleFCM
-  - RULE-SET,YouTube_域,YouTube
-  - RULE-SET,Google_域,Google
-  - RULE-SET,Google_IP,Google,no-resolve
-  - RULE-SET,No-ads-all_域,广告拦截
-  - PROCESS-NAME,com.ss.android.ugc.aweme,抖音
-  - RULE-SET,DouYin_域,抖音
-  - PROCESS-NAME,com.xingin.xhs,小红书
-  - RULE-SET,XiaoHongShu_域,小红书
-  - PROCESS-NAME,tv.danmaku.bili,BiliBili
-  - RULE-SET,BiliBili_域,BiliBili
-  - RULE-SET,BiliBili_IP,BiliBili,no-resolve
+  - DST-PORT,853,🧭 DNS连接
+  - RULE-SET,WebRTC_端/域,📞 WebRTC
+  - RULE-SET,GoogleFCM_域,📮 GoogleFCM
+  - RULE-SET,YouTube_域,▶️ YouTube
+  - RULE-SET,Google_域,🔍 Google
+  - RULE-SET,Google_IP,🔍 Google,no-resolve
+  - RULE-SET,No-ads-all_域,🛡️ 广告拦截
+  - PROCESS-NAME,com.ss.android.ugc.aweme,🎵 抖音
+  - RULE-SET,DouYin_域,🎵 抖音
+  - PROCESS-NAME,com.xingin.xhs,📕 小红书
+  - RULE-SET,XiaoHongShu_域,📕 小红书
+  - PROCESS-NAME,tv.danmaku.bili,📺 BiliBili
+  - RULE-SET,BiliBili_域,📺 BiliBili
+  - RULE-SET,BiliBili_IP,📺 BiliBili,no-resolve
   # 国内 CDN 下载（Steam/游戏/系统更新）直连，商店与登录仍走各自分组
   - RULE-SET,SteamCN_域,🌐 本机·本地直连
   - RULE-SET,GameCN_域,🌐 本机·本地直连
-  - RULE-SET,Steam_域,Steam
-  - RULE-SET,Game_域,游戏平台
-  - RULE-SET,GitHub_域,GitHub
-  - RULE-SET,Discord_域,Discord
-  - RULE-SET,TikTok_域,TikTok
-  - RULE-SET,Twitter_域,Twitter(X)
-  - RULE-SET,Twitter_IP,Twitter(X),no-resolve
-  - RULE-SET,Netflix_域,Netflix
-  - RULE-SET,Netflix_IP,Netflix,no-resolve
-  - RULE-SET,Disney_域,Disney+
-  - RULE-SET,HBO_域,海外媒体
-  - RULE-SET,PrimeVideo_域,海外媒体
-  - RULE-SET,Bahamut_域,巴哈姆特
-  - RULE-SET,Spotify_域,Spotify
-  - RULE-SET,Facebook_域,Facebook
-  - RULE-SET,Facebook_IP,Facebook,no-resolve
-  - RULE-SET,AI_域,AI
-  - RULE-SET,PayPal_域,PayPal
-  - RULE-SET,Crypto_域,加密货币
-  # 国内测速站（speedtest.cn / 高校测速）直连测本地宽带，其余测速站走 Speedtest 组
+  - RULE-SET,Steam_域,🎮 Steam
+  - RULE-SET,Game_域,🕹️ 游戏平台
+  - RULE-SET,GitHub_域,🐙 GitHub
+  - RULE-SET,Discord_域,💬 Discord
+  - RULE-SET,TikTok_域,🎶 TikTok
+  - RULE-SET,Twitter_域,🐦 Twitter(X)
+  - RULE-SET,Twitter_IP,🐦 Twitter(X),no-resolve
+  - RULE-SET,Netflix_域,🎬 Netflix
+  - RULE-SET,Netflix_IP,🎬 Netflix,no-resolve
+  - RULE-SET,Disney_域,🏰 Disney+
+  - RULE-SET,HBO_域,📡 海外媒体
+  - RULE-SET,PrimeVideo_域,📡 海外媒体
+  - RULE-SET,Bahamut_域,🎌 巴哈姆特
+  - RULE-SET,Spotify_域,🎧 Spotify
+  - RULE-SET,Facebook_域,👥 Facebook
+  - RULE-SET,Facebook_IP,👥 Facebook,no-resolve
+  - RULE-SET,AI_域,🤖 AI
+  - RULE-SET,PayPal_域,💳 PayPal
+  - RULE-SET,Crypto_域,🪙 加密货币
+  # 国内测速站（speedtest.cn / 高校测速）直连测本地宽带，其余测速站走 ⏱️ Speedtest 组
   - RULE-SET,SpeedtestCN_域,🌐 本机·本地直连
-  - RULE-SET,Speedtest_域,Speedtest
+  - RULE-SET,Speedtest_域,⏱️ Speedtest
   - RULE-SET,AppleCN_域,🌐 本机·本地直连
   - RULE-SET,MicrosoftCN_域,🌐 本机·本地直连
-  - RULE-SET,Apple_域,Apple
-  - RULE-SET,Apple_IP,Apple,no-resolve
-  - RULE-SET,Microsoft_域,Microsoft
-  - RULE-SET,Telegram_域,Telegram
-  - RULE-SET,Telegram_IP,Telegram,no-resolve
+  - RULE-SET,Apple_域,🍎 Apple
+  - RULE-SET,Apple_IP,🍎 Apple,no-resolve
+  - RULE-SET,Microsoft_域,🪟 Microsoft
+  - RULE-SET,Telegram_域,✈️ Telegram
+  - RULE-SET,Telegram_IP,✈️ Telegram,no-resolve
   # 境外域名直接走代理，免去 CN_IP 判断前的 DNS 解析
-  - RULE-SET,Global_域,总模式
+  - RULE-SET,Global_域,🚀 总模式
   - RULE-SET,CN_域,🌐 本机·本地直连
   - RULE-SET,CN_IP,🌐 本机·本地直连
-  - MATCH,漏网之鱼
+  - MATCH,🐟 漏网之鱼
