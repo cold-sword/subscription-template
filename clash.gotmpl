@@ -127,7 +127,7 @@
   (dict "name" "GitHub" "icon" (print $q "GitHub.png"))
   (dict "name" "Twitter(X)" "icon" (print $q "X.png"))
   (dict "name" "PayPal" "icon" (print $q "PayPal.png"))
-  (dict "name" "加密货币" "icon" (print $q "Cryptocurrency.png"))
+  (dict "name" "加密货币" "icon" (print $q "Cryptocurrency.png") "prefer" "ALL·中国台湾")
   (dict "name" "Speedtest" "icon" (print $q "Speedtest.png"))
   (dict "name" "DNS连接" "icon" (print $s "DNS.svg"))
   (dict "name" "漏网之鱼" "icon" (print $q "Final.png"))
@@ -145,6 +145,9 @@ allow-lan: false
 bind-address: '*'
 unified-delay: true
 tcp-concurrent: true
+# TCP 保活：移动端省电，切网后更快发现断线
+keep-alive-idle: 600
+keep-alive-interval: 15
 log-level: info
 external-controller: '127.0.0.1:9090'
 
@@ -769,6 +772,10 @@ rule-providers:
   (list "BiliBili_域" "domain" "geo/geosite/bilibili")
   (list "BiliBili_IP" "ipcidr" "geo-lite/geoip/bilibili")
   (list "Steam_域" "domain" "geo/geosite/steam")
+  (list "SteamCN_域" "domain" "geo/geosite/steam@cn")
+  (list "GameCN_域" "domain" "geo/geosite/category-games@cn")
+  (list "AppleCN_域" "domain" "geo/geosite/apple@cn")
+  (list "MicrosoftCN_域" "domain" "geo/geosite/microsoft@cn")
   (list "Game_域" "domain" "geo/geosite/category-games-!cn")
   (list "Disney_域" "domain" "geo/geosite/disney")
   (list "HBO_域" "domain" "geo/geosite/hbo")
@@ -843,6 +850,9 @@ rules:
   - PROCESS-NAME,tv.danmaku.bili,BiliBili
   - RULE-SET,BiliBili_域,BiliBili
   - RULE-SET,BiliBili_IP,BiliBili,no-resolve
+  # 国内 CDN 下载（Steam/游戏/系统更新）直连，商店与登录仍走各自分组
+  - RULE-SET,SteamCN_域,🌐 本机·本地直连
+  - RULE-SET,GameCN_域,🌐 本机·本地直连
   - RULE-SET,Steam_域,Steam
   - RULE-SET,Game_域,游戏平台
   - RULE-SET,GitHub_域,GitHub
@@ -863,6 +873,8 @@ rules:
   - RULE-SET,PayPal_域,PayPal
   - RULE-SET,Crypto_域,加密货币
   - RULE-SET,Speedtest_域,Speedtest
+  - RULE-SET,AppleCN_域,🌐 本机·本地直连
+  - RULE-SET,MicrosoftCN_域,🌐 本机·本地直连
   - RULE-SET,Apple_域,Apple
   - RULE-SET,Apple_IP,Apple,no-resolve
   - RULE-SET,Microsoft_域,Microsoft

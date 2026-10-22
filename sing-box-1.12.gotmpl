@@ -43,7 +43,7 @@
 {{- end -}}
 
 {{- /* ---- 过滤 sing-box 1.12 可用节点, 并按 tag 去重 ---- */ -}}
-{{- $reserved := dict "节点选择" true "自动选择" true "直连" true "国内" true "Github" true "Google" true "Microsoft" true "AI" true "Telegram" true "Twitter" true "Youtube" true -}}
+{{- $reserved := dict "总模式" true "ALL·延迟最低" true "ALL·其它地区" true "直连" true "ALL·日本地区" true "ALL·中国台湾" true "ALL·香港地区" true "ALL·美国地区" true "ALL·狮城地区" true "小红书" true "抖音" true "BiliBili" true "Steam" true "游戏平台" true "Apple" true "Microsoft" true "Telegram" true "Discord" true "Spotify" true "TikTok" true "YouTube" true "Netflix" true "Disney+" true "海外媒体" true "巴哈姆特" true "Google" true "GoogleFCM" true "Facebook" true "AI" true "GitHub" true "Twitter(X)" true "PayPal" true "加密货币" true "Speedtest" true "漏网之鱼" true -}}
 {{- $seen := dict -}}
 {{- $supported := list -}}
 {{- range $p := $sorted -}}
@@ -241,21 +241,91 @@
   {{- $names = append $names $p.Name -}}
 {{- end -}}
 
-{{- /* ---- 策略组 ---- */ -}}
+{{- /* ---- 策略组: 总模式 → 自动/地区组 → 直连 → 全部节点; 地区按节点名匹配, 无节点的地区不生成 ---- */ -}}
 {{- $hasNodes := gt (len $names) 0 -}}
-{{- $groups := list -}}
-{{- $mainList := list -}}
-{{- if $hasNodes -}}{{- $mainList = list "自动选择" -}}{{- end -}}
-{{- $mainList = concat $mainList $names (list "直连") -}}
-{{- $groups = append $groups (dict "tag" "节点选择" "type" "selector" "outbounds" $mainList) -}}
+{{- $regionDefs := list
+  (dict "name" "ALL·日本地区" "re" `(?i)(日本|川日|东京|大阪|泉日|埼玉|沪日|深日|[^-]日|jp|japan)`)
+  (dict "name" "ALL·中国台湾" "re" `(?i)(台|新北|彰化|tw|taiwan|taipei)`)
+  (dict "name" "ALL·香港地区" "re" `(?i)(港|hk|hong ?kong)`)
+  (dict "name" "ALL·美国地区" "re" `(?i)(美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|us|united ?states)`)
+  (dict "name" "ALL·狮城地区" "re" `(?i)(新加坡|坡|狮城|sg|singapore)`)
+-}}
+{{- $matched := dict -}}
+{{- $regionGroups := list -}}
+{{- range $r := $regionDefs -}}
+  {{- $members := list -}}
+  {{- range $n := $names -}}
+    {{- if regexMatch $r.re $n -}}
+      {{- $members = append $members $n -}}
+      {{- $_ := set $matched $n true -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if $members -}}
+    {{- $regionGroups = append $regionGroups (dict "tag" $r.name "type" "urltest" "outbounds" $members "interval" "5m") -}}
+  {{- end -}}
+{{- end -}}
+{{- $others := list -}}
+{{- range $n := $names -}}
+  {{- if not (hasKey $matched $n) -}}{{- $others = append $others $n -}}{{- end -}}
+{{- end -}}
+{{- if $others -}}
+  {{- $regionGroups = append $regionGroups (dict "tag" "ALL·其它地区" "type" "urltest" "outbounds" $others "interval" "5m") -}}
+{{- end -}}
+{{- $autoTags := list -}}
+{{- if $hasNodes -}}{{- $autoTags = list "ALL·延迟最低" -}}{{- end -}}
+{{- range $g := $regionGroups -}}{{- $autoTags = append $autoTags $g.tag -}}{{- end -}}
+{{- $selectList := concat (list "总模式") $autoTags (list "直连") $names -}}
+
+{{- $serviceDefs := list
+  (dict "name" "小红书" "prefer" "直连")
+  (dict "name" "抖音" "prefer" "直连")
+  (dict "name" "BiliBili" "prefer" "直连")
+  (dict "name" "Steam")
+  (dict "name" "游戏平台")
+  (dict "name" "Apple")
+  (dict "name" "Microsoft")
+  (dict "name" "Telegram")
+  (dict "name" "Discord")
+  (dict "name" "Spotify")
+  (dict "name" "TikTok")
+  (dict "name" "YouTube")
+  (dict "name" "Netflix")
+  (dict "name" "Disney+")
+  (dict "name" "海外媒体")
+  (dict "name" "巴哈姆特" "prefer" "ALL·中国台湾")
+  (dict "name" "Google")
+  (dict "name" "GoogleFCM")
+  (dict "name" "Facebook")
+  (dict "name" "AI")
+  (dict "name" "GitHub")
+  (dict "name" "Twitter(X)")
+  (dict "name" "PayPal")
+  (dict "name" "加密货币" "prefer" "ALL·中国台湾")
+  (dict "name" "Speedtest")
+  (dict "name" "漏网之鱼")
+-}}
+{{- $groups := list (dict "tag" "总模式" "type" "selector" "outbounds" (concat $autoTags (list "直连"))) -}}
+{{- range $g := $serviceDefs -}}
+  {{- $sel := dict "tag" $g.name "type" "selector" "outbounds" $selectList -}}
+  {{- if and (hasKey $g "prefer") (has $g.prefer $selectList) -}}
+    {{- $_ := set $sel "default" $g.prefer -}}
+  {{- end -}}
+  {{- $groups = append $groups $sel -}}
+{{- end -}}
 {{- if $hasNodes -}}
-  {{- $groups = append $groups (dict "tag" "自动选择" "type" "urltest" "outbounds" $names "interval" "5m") -}}
+  {{- $groups = append $groups (dict "tag" "ALL·延迟最低" "type" "urltest" "outbounds" $names "interval" "5m") -}}
 {{- end -}}
-{{- range $g := list "Github" "Google" "Microsoft" "AI" "Telegram" "Twitter" "Youtube" -}}
-  {{- $groups = append $groups (dict "tag" $g "type" "selector" "outbounds" (concat (list "节点选择" "直连") $names)) -}}
+{{- $allOutbounds := concat $groups $regionGroups $nodeOutbounds (list (dict "tag" "直连" "type" "direct")) -}}
+
+{{- /* ---- 规则集: MetaCubeX meta-rules-dat (sing 分支) + AWAvenue 去广告 ---- */ -}}
+{{- $sb := "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@sing" -}}
+{{- $ruleSets := list (dict "tag" "ads" "type" "remote" "format" "source" "url" "https://cdn.jsdmirror.com/gh/TG-Twilight/AWAvenue-Ads-Rule@main/Filters/AWAvenue-Ads-Rule-Singbox.json" "download_detour" "直连") -}}
+{{- range $n := list "private" "googlefcm" "youtube" "google" "douyin" "xiaohongshu" "bilibili" "steam@cn" "category-games@cn" "steam" "category-games-!cn" "github" "discord" "tiktok" "twitter" "netflix" "disney" "hbo" "primevideo" "bahamut" "spotify" "facebook" "category-ai-!cn" "paypal" "category-cryptocurrency" "ookla-speedtest" "apple@cn" "microsoft@cn" "apple" "microsoft" "telegram" "geolocation-!cn" "cn" -}}
+  {{- $ruleSets = append $ruleSets (dict "tag" (print "geosite-" $n) "type" "remote" "format" "binary" "url" (print $sb "/geo/geosite/" $n ".srs") "download_detour" "直连") -}}
 {{- end -}}
-{{- $groups = append $groups (dict "tag" "国内" "type" "selector" "outbounds" (concat (list "直连" "节点选择") $names)) -}}
-{{- $allOutbounds := concat $groups $nodeOutbounds (list (dict "tag" "直连" "type" "direct")) -}}
+{{- range $n := list "google" "bilibili" "twitter" "netflix" "facebook" "apple" "telegram" "cn" -}}
+  {{- $ruleSets = append $ruleSets (dict "tag" (print "geoip-" $n) "type" "remote" "format" "binary" "url" (print $sb "/geo-lite/geoip/" $n ".srs") "download_detour" "直连") -}}
+{{- end -}}
 // {{ .SiteName }} - {{ .SubscribeName }} | 已用 {{ $used }} GiB / 共 {{ $total }} GiB | 到期: {{ $ExpiredAt }}
 // 适用 sing-box 1.12.x
 {
@@ -287,12 +357,16 @@
         "tag": "google",
         "type": "https",
         "server": "8.8.8.8",
-        "detour": "节点选择"
+        "detour": "总模式"
       },
       {
         "tag": "ali",
         "type": "https",
         "server": "223.5.5.5"
+      },
+      {
+        "tag": "local",
+        "type": "local"
       },
       {
         "tag": "fakeip",
@@ -309,6 +383,26 @@
       {
         "clash_mode": "Global",
         "server": "google"
+      },
+      {
+        "rule_set": "geosite-private",
+        "server": "local"
+      },
+      {
+        "domain_suffix": [
+          "msftconnecttest.com",
+          "msftncsi.com",
+          "pool.ntp.org",
+          "xboxlive.com",
+          "srv.nintendo.net",
+          "stun.playstation.net"
+        ],
+        "domain_regex": [
+          "^time\\..+\\.(com|gov)$",
+          "^ntp\\..+\\.com$",
+          "^stun\\..+"
+        ],
+        "server": "ali"
       },
       {
         "rule_set": "geosite-cn",
@@ -345,7 +439,7 @@
     "default_domain_resolver": {
       "server": "ali"
     },
-    "final": "节点选择",
+    "final": "漏网之鱼",
     "rules": [
       {
         "action": "sniff"
@@ -359,9 +453,8 @@
         "outbound": "直连"
       },
       {
-        "rule_set": "anti-ad",
-        "clash_mode": "Rule",
-        "action": "reject"
+        "rule_set": "geosite-private",
+        "outbound": "直连"
       },
       {
         "clash_mode": "Direct",
@@ -369,145 +462,162 @@
       },
       {
         "clash_mode": "Global",
-        "outbound": "节点选择"
+        "outbound": "总模式"
       },
       {
-        "rule_set": "geosite-github",
-        "outbound": "Github"
+        "rule_set": "geosite-googlefcm",
+        "outbound": "GoogleFCM"
+      },
+      {
+        "rule_set": "geosite-youtube",
+        "outbound": "YouTube"
       },
       {
         "rule_set": [
-          "geoip-google",
-          "geosite-google"
+          "geosite-google",
+          "geoip-google"
         ],
         "outbound": "Google"
+      },
+      {
+        "rule_set": "ads",
+        "action": "reject"
+      },
+      {
+        "rule_set": "geosite-douyin",
+        "outbound": "抖音"
+      },
+      {
+        "rule_set": "geosite-xiaohongshu",
+        "outbound": "小红书"
+      },
+      {
+        "rule_set": [
+          "geosite-bilibili",
+          "geoip-bilibili"
+        ],
+        "outbound": "BiliBili"
+      },
+      {
+        "rule_set": [
+          "geosite-steam@cn",
+          "geosite-category-games@cn"
+        ],
+        "outbound": "直连"
+      },
+      {
+        "rule_set": "geosite-steam",
+        "outbound": "Steam"
+      },
+      {
+        "rule_set": "geosite-category-games-!cn",
+        "outbound": "游戏平台"
+      },
+      {
+        "rule_set": "geosite-github",
+        "outbound": "GitHub"
+      },
+      {
+        "rule_set": "geosite-discord",
+        "outbound": "Discord"
+      },
+      {
+        "rule_set": "geosite-tiktok",
+        "outbound": "TikTok"
+      },
+      {
+        "rule_set": [
+          "geosite-twitter",
+          "geoip-twitter"
+        ],
+        "outbound": "Twitter(X)"
+      },
+      {
+        "rule_set": [
+          "geosite-netflix",
+          "geoip-netflix"
+        ],
+        "outbound": "Netflix"
+      },
+      {
+        "rule_set": "geosite-disney",
+        "outbound": "Disney+"
+      },
+      {
+        "rule_set": [
+          "geosite-hbo",
+          "geosite-primevideo"
+        ],
+        "outbound": "海外媒体"
+      },
+      {
+        "rule_set": "geosite-bahamut",
+        "outbound": "巴哈姆特"
+      },
+      {
+        "rule_set": "geosite-spotify",
+        "outbound": "Spotify"
+      },
+      {
+        "rule_set": [
+          "geosite-facebook",
+          "geoip-facebook"
+        ],
+        "outbound": "Facebook"
+      },
+      {
+        "rule_set": "geosite-category-ai-!cn",
+        "outbound": "AI"
+      },
+      {
+        "rule_set": "geosite-paypal",
+        "outbound": "PayPal"
+      },
+      {
+        "rule_set": "geosite-category-cryptocurrency",
+        "outbound": "加密货币"
+      },
+      {
+        "rule_set": "geosite-ookla-speedtest",
+        "outbound": "Speedtest"
+      },
+      {
+        "rule_set": [
+          "geosite-apple@cn",
+          "geosite-microsoft@cn"
+        ],
+        "outbound": "直连"
+      },
+      {
+        "rule_set": [
+          "geosite-apple",
+          "geoip-apple"
+        ],
+        "outbound": "Apple"
       },
       {
         "rule_set": "geosite-microsoft",
         "outbound": "Microsoft"
       },
       {
-        "rule_set": "geosite-ai",
-        "outbound": "AI"
-      },
-      {
         "rule_set": [
-          "geoip-telegram",
-          "geosite-telegram"
+          "geosite-telegram",
+          "geoip-telegram"
         ],
         "outbound": "Telegram"
       },
       {
-        "rule_set": [
-          "geoip-twitter",
-          "geosite-twitter"
-        ],
-        "outbound": "Twitter"
-      },
-      {
-        "rule_set": "geosite-youtube",
-        "outbound": "Youtube"
+        "rule_set": "geosite-geolocation-!cn",
+        "outbound": "总模式"
       },
       {
         "rule_set": [
-          "geoip-cn",
-          "geosite-cn"
+          "geosite-cn",
+          "geoip-cn"
         ],
-        "outbound": "国内"
+        "outbound": "直连"
       }
     ],
-    "rule_set": [
-      {
-        "tag": "anti-ad",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://anti-ad.net/anti-ad-sing-box.srs",
-        "download_detour": "直连"
-      },
-      {
-        "tag": "geosite-github",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://cdn.jsdmirror.com/gh/perfect-panel/rules/geo/geosite/github.srs",
-        "download_detour": "直连"
-      },
-      {
-        "tag": "geoip-google",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://cdn.jsdmirror.com/gh/perfect-panel/rules/geo/geoip/google.srs",
-        "download_detour": "直连"
-      },
-      {
-        "tag": "geosite-google",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://cdn.jsdmirror.com/gh/perfect-panel/rules/geo/geosite/google.srs",
-        "download_detour": "直连"
-      },
-      {
-        "tag": "geosite-microsoft",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://cdn.jsdmirror.com/gh/perfect-panel/rules/geo/geosite/microsoft.srs",
-        "download_detour": "直连"
-      },
-      {
-        "tag": "geosite-ai",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://cdn.jsdmirror.com/gh/perfect-panel/rules/geo/geosite/category-ai-!cn@!cn.srs",
-        "download_detour": "直连"
-      },
-      {
-        "tag": "geoip-telegram",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://cdn.jsdmirror.com/gh/perfect-panel/rules/geo/geoip/telegram.srs",
-        "download_detour": "直连"
-      },
-      {
-        "tag": "geosite-telegram",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://cdn.jsdmirror.com/gh/perfect-panel/rules/geo/geosite/telegram.srs",
-        "download_detour": "直连"
-      },
-      {
-        "tag": "geoip-twitter",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://cdn.jsdmirror.com/gh/perfect-panel/rules/geo/geoip/twitter.srs",
-        "download_detour": "直连"
-      },
-      {
-        "tag": "geosite-twitter",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://cdn.jsdmirror.com/gh/perfect-panel/rules/geo/geosite/twitter.srs",
-        "download_detour": "直连"
-      },
-      {
-        "tag": "geosite-youtube",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://cdn.jsdmirror.com/gh/perfect-panel/rules/geo/geosite/youtube.srs",
-        "download_detour": "直连"
-      },
-      {
-        "tag": "geosite-cn",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://cdn.jsdmirror.com/gh/perfect-panel/rules/geo/geosite/cn.srs",
-        "download_detour": "直连"
-      },
-      {
-        "tag": "geoip-cn",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://cdn.jsdmirror.com/gh/perfect-panel/rules/geo/geoip/cn.srs",
-        "download_detour": "直连"
-      }
-    ]
+    "rule_set": {{ toPrettyJson $ruleSets }}
   }
 }
