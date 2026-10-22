@@ -192,7 +192,7 @@ tun:
     - any:53
     - tcp://any:53
   udp-timeout: 300
-  # UDP 全锥形 NAT：游戏联机 / P2P / 语音通话
+  # UDP 全锥形 NAT：新内核 mips/gvisor 栈已默认如此，此项只对旧内核生效
   endpoint-independent-nat: true
 
 hosts:
@@ -207,7 +207,6 @@ dns:
   use-hosts: true
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
-  fake-ip-range6: fdfe:dcba:9876::/64
   fake-ip-filter:
     - 'RULE-SET:CN_域'
     - 'RULE-SET:Private_域'
@@ -305,6 +304,8 @@ proxies:
   cipher: auto
   udp: true
   tfo: true
+  # XUDP：VMess 的 UDP 全锥形（VLESS 在 mihomo 中默认已启用）
+  packet-encoding: xudp
   {{- if or (eq $proxy.Transport "websocket") (eq $proxy.Transport "ws") }}
   network: ws
   ws-opts:
