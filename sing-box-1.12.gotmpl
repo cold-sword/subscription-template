@@ -43,7 +43,7 @@
 {{- end -}}
 
 {{- /* ---- 过滤 sing-box 1.12 可用节点, 并按 tag 去重 ---- */ -}}
-{{- $reserved := dict "🚀 总模式" true "⚡ ALL·延迟最低" true "🌐 ALL·其它地区" true "直连" true "🇯🇵 ALL·日本地区" true "🇹🇼 ALL·台湾地区" true "🇭🇰 ALL·香港地区" true "🇺🇸 ALL·美国地区" true "🇸🇬 ALL·狮城地区" true "📕 小红书" true "🎵 抖音" true "📺 BiliBili" true "🎮 Steam" true "🕹️ 游戏平台" true "🍎 Apple" true "🪟 Microsoft" true "✈️ Telegram" true "💬 Discord" true "🎧 Spotify" true "🎶 TikTok" true "▶️ YouTube" true "🎬 Netflix" true "🏰 Disney+" true "📡 海外媒体" true "🎌 巴哈姆特" true "🔍 Google" true "📮 GoogleFCM" true "👥 Facebook" true "🤖 AI" true "🐙 GitHub" true "🐦 Twitter(X)" true "💳 PayPal" true "🪙 加密货币" true "⏱️ Speedtest" true "🐟 漏网之鱼" true -}}
+{{- $reserved := dict "🚀 总模式" true "⚡ ALL·延迟最低" true "🌐 ALL·其它地区" true "直连" true "🇯🇵 ALL·日本地区" true "🇹🇼 ALL·台湾地区" true "🇭🇰 ALL·香港地区" true "🇺🇸 ALL·美国地区" true "🇸🇬 ALL·狮城地区" true "📕 小红书" true "🎵 抖音" true "📺 BiliBili" true "🎮 Steam" true "🕹️ 游戏平台" true "🍎 Apple" true "🪟 Microsoft" true "✈️ Telegram" true "💬 Discord" true "🎧 Spotify" true "🎶 TikTok" true "▶️ YouTube" true "🎬 Netflix" true "🏰 Disney+" true "📡 海外媒体" true "🎌 巴哈姆特" true "🔍 Google" true "📮 GoogleFCM" true "👥 Facebook" true "🤖 AI" true "🐙 GitHub" true "🐦 Twitter(X)" true "💰 金融服务" true "🪙 加密货币" true "⏱️ Speedtest" true "🐟 漏网之鱼" true -}}
 {{- $seen := dict -}}
 {{- $supported := list -}}
 {{- range $p := $sorted -}}
@@ -299,7 +299,7 @@
   (dict "name" "🤖 AI")
   (dict "name" "🐙 GitHub")
   (dict "name" "🐦 Twitter(X)")
-  (dict "name" "💳 PayPal")
+  (dict "name" "💰 金融服务" "prefer" "__first__")
   (dict "name" "🪙 加密货币" "prefer" "🇹🇼 ALL·台湾地区")
   (dict "name" "⏱️ Speedtest")
   (dict "name" "🐟 漏网之鱼")
@@ -307,7 +307,10 @@
 {{- $groups := list (dict "tag" "🚀 总模式" "type" "selector" "outbounds" (concat $autoTags (list "直连"))) -}}
 {{- range $g := $serviceDefs -}}
   {{- $sel := dict "tag" $g.name "type" "selector" "outbounds" $selectList -}}
-  {{- if and (hasKey $g "prefer") (has $g.prefer $selectList) -}}
+  {{- if and (hasKey $g "prefer") (eq $g.prefer "__first__") $hasNodes -}}
+    {{- /* 金融服务: 默认固定第一个节点, 出口 IP 稳定避免风控 */ -}}
+    {{- $_ := set $sel "default" (index $names 0) -}}
+  {{- else if and (hasKey $g "prefer") (has $g.prefer $selectList) -}}
     {{- $_ := set $sel "default" $g.prefer -}}
   {{- end -}}
   {{- $groups = append $groups $sel -}}
@@ -320,7 +323,7 @@
 {{- /* ---- 规则集: MetaCubeX meta-rules-dat (sing 分支) + AWAvenue 去广告 ---- */ -}}
 {{- $sb := "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@sing" -}}
 {{- $ruleSets := list (dict "tag" "ads" "type" "remote" "format" "source" "url" "https://cdn.jsdmirror.com/gh/TG-Twilight/AWAvenue-Ads-Rule@main/Filters/AWAvenue-Ads-Rule-Singbox.json" "download_detour" "直连") -}}
-{{- range $n := list "private" "googlefcm" "youtube" "google" "douyin" "xiaohongshu" "bilibili" "steam@cn" "category-games@cn" "steam" "category-games-!cn" "github" "discord" "tiktok" "twitter" "netflix" "disney" "hbo" "primevideo" "bahamut" "spotify" "facebook" "category-ai-!cn" "paypal" "category-cryptocurrency" "category-speedtest@cn" "category-speedtest" "apple@cn" "microsoft@cn" "apple" "microsoft" "telegram" "geolocation-!cn" "cn" -}}
+{{- range $n := list "private" "googlefcm" "youtube" "google" "douyin" "xiaohongshu" "bilibili" "steam@cn" "category-games@cn" "steam" "category-games-!cn" "github" "discord" "tiktok" "twitter" "netflix" "disney" "hbo" "primevideo" "bahamut" "spotify" "facebook" "category-ai-!cn" "paypal" "category-finance" "category-cryptocurrency" "category-speedtest@cn" "category-speedtest" "apple@cn" "microsoft@cn" "apple" "microsoft" "telegram" "geolocation-!cn" "cn" -}}
   {{- $ruleSets = append $ruleSets (dict "tag" (print "geosite-" $n) "type" "remote" "format" "binary" "url" (print $sb "/geo/geosite/" $n ".srs") "download_detour" "直连") -}}
 {{- end -}}
 {{- range $n := list "google" "bilibili" "twitter" "netflix" "facebook" "apple" "telegram" "cn" -}}
@@ -570,8 +573,41 @@
         "outbound": "🤖 AI"
       },
       {
+        "type": "logical",
+        "mode": "and",
+        "rules": [
+          {
+            "rule_set": "geosite-category-finance"
+          },
+          {
+            "rule_set": "geosite-cn",
+            "invert": true
+          }
+        ],
+        "outbound": "💰 金融服务"
+      },
+      {
         "rule_set": "geosite-paypal",
-        "outbound": "💳 PayPal"
+        "outbound": "💰 金融服务"
+      },
+      {
+        "domain_suffix": [
+          "hangseng.com",
+          "bochk.com",
+          "citibank.com.hk",
+          "mox.com",
+          "za.group",
+          "livibank.com",
+          "welab.bank",
+          "airstarbank.com",
+          "revolut.com",
+          "airwallex.com",
+          "payoneer.com",
+          "monzo.com",
+          "dbs.com",
+          "ocbc.com"
+        ],
+        "outbound": "💰 金融服务"
       },
       {
         "rule_set": "geosite-category-cryptocurrency",
