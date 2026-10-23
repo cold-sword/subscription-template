@@ -124,7 +124,7 @@
   (dict "name" "🤖 AI" "icon" (print $q "AI.png"))
   (dict "name" "🐙 GitHub" "icon" (print $q "GitHub.png"))
   (dict "name" "🐦 Twitter(X)" "icon" (print $q "X.png"))
-  (dict "name" "💳 PayPal" "icon" (print $q "PayPal.png"))
+  (dict "name" "💰 金融服务" "icon" (print $q "Lock.png") "prefer" "🔁 ALL·故障转移")
   (dict "name" "🪙 加密货币" "icon" (print $q "Cryptocurrency.png") "prefer" "🇹🇼 ALL·台湾地区")
   (dict "name" "⏱️ Speedtest" "icon" (print $q "Speedtest.png"))
   (dict "name" "🐟 漏网之鱼" "icon" (print $q "Final.png"))
@@ -272,33 +272,77 @@ proxy-groups:
 
 rules:
   - RULE-SET,Lan,🌐 本机·本地直连
-  - RULE-SET,📮 GoogleFCM,📮 GoogleFCM
-  - RULE-SET,▶️ YouTube,▶️ YouTube
-  - RULE-SET,🔍 Google,🔍 Google
+  - RULE-SET,GoogleFCM,📮 GoogleFCM
+  - RULE-SET,YouTube,▶️ YouTube
+  - RULE-SET,Google,🔍 Google
   - RULE-SET,AdvertisingLite,🛡️ 广告拦截
   - RULE-SET,DouYin,🎵 抖音
   - RULE-SET,XiaoHongShu,📕 小红书
-  - RULE-SET,📺 BiliBili,📺 BiliBili
+  - RULE-SET,BiliBili,📺 BiliBili
   # 🎮 Steam 国内 CDN 下载直连，商店与登录仍走 🎮 Steam 组
   - RULE-SET,SteamCN,🌐 本机·本地直连
-  - RULE-SET,🎮 Steam,🎮 Steam
+  - RULE-SET,Steam,🎮 Steam
   - RULE-SET,Game,🕹️ 游戏平台
-  - RULE-SET,🐙 GitHub,🐙 GitHub
-  - RULE-SET,💬 Discord,💬 Discord
-  - RULE-SET,🎶 TikTok,🎶 TikTok
+  - RULE-SET,GitHub,🐙 GitHub
+  - RULE-SET,Discord,💬 Discord
+  - RULE-SET,TikTok,🎶 TikTok
   - RULE-SET,Twitter,🐦 Twitter(X)
-  - RULE-SET,🎬 Netflix,🎬 Netflix
+  - RULE-SET,Netflix,🎬 Netflix
   - RULE-SET,Disney,🏰 Disney+
   - RULE-SET,HBO,📡 海外媒体
   - RULE-SET,PrimeVideo,📡 海外媒体
   - RULE-SET,Bahamut,🎌 巴哈姆特
-  - RULE-SET,🎧 Spotify,🎧 Spotify
-  - RULE-SET,👥 Facebook,👥 Facebook
+  - RULE-SET,Spotify,🎧 Spotify
+  - RULE-SET,Facebook,👥 Facebook
   - RULE-SET,OpenAI,🤖 AI
   - RULE-SET,Claude,🤖 AI
   - RULE-SET,Gemini,🤖 AI
   - RULE-SET,Copilot,🤖 AI
-  - RULE-SET,💳 PayPal,💳 PayPal
+  # 金融服务：出口固定（默认故障转移组），避免登录地频繁变化触发风控
+  - RULE-SET,PayPal,💰 金融服务
+  - DOMAIN-SUFFIX,wise.com,💰 金融服务
+  - DOMAIN-SUFFIX,transferwise.com,💰 金融服务
+  - DOMAIN-SUFFIX,interactivebrokers.com,💰 金融服务
+  - DOMAIN-SUFFIX,ibkr.com,💰 金融服务
+  - DOMAIN-SUFFIX,interactivebrokers.com.hk,💰 金融服务
+  - DOMAIN-SUFFIX,ibkr.com.hk,💰 金融服务
+  - DOMAIN-SUFFIX,ibkrguides.com,💰 金融服务
+  - DOMAIN-SUFFIX,schwab.com,💰 金融服务
+  - DOMAIN-SUFFIX,schwab.com.hk,💰 金融服务
+  - DOMAIN-SUFFIX,hsbc.com,💰 金融服务
+  - DOMAIN-SUFFIX,hsbc.com.hk,💰 金融服务
+  - DOMAIN-SUFFIX,hsbc.co.uk,💰 金融服务
+  - DOMAIN-SUFFIX,hsbcnet.com,💰 金融服务
+  - DOMAIN-SUFFIX,stripe.com,💰 金融服务
+  - DOMAIN-SUFFIX,stripe.network,💰 金融服务
+  - DOMAIN-SUFFIX,stripecdn.com,💰 金融服务
+  - DOMAIN-SUFFIX,n26.com,💰 金融服务
+  - DOMAIN-SUFFIX,futunn.com,💰 金融服务
+  - DOMAIN-SUFFIX,futuhk.com,💰 金融服务
+  - DOMAIN-SUFFIX,futustatic.com,💰 金融服务
+  - DOMAIN-SUFFIX,moomoo.com,💰 金融服务
+  - DOMAIN-SUFFIX,itiger.com,💰 金融服务
+  - DOMAIN-SUFFIX,itigerup.com,💰 金融服务
+  - DOMAIN-SUFFIX,longbridge.hk,💰 金融服务
+  - DOMAIN-SUFFIX,longbridge.com,💰 金融服务
+  - DOMAIN-SUFFIX,longbridgeapp.com,💰 金融服务
+  - DOMAIN-SUFFIX,ifastgb.com,💰 金融服务
+  - DOMAIN-SUFFIX,ifastcorp.com,💰 金融服务
+  - DOMAIN-SUFFIX,sc.com,💰 金融服务
+  - DOMAIN-SUFFIX,hangseng.com,💰 金融服务
+  - DOMAIN-SUFFIX,bochk.com,💰 金融服务
+  - DOMAIN-SUFFIX,citibank.com.hk,💰 金融服务
+  - DOMAIN-SUFFIX,mox.com,💰 金融服务
+  - DOMAIN-SUFFIX,za.group,💰 金融服务
+  - DOMAIN-SUFFIX,livibank.com,💰 金融服务
+  - DOMAIN-SUFFIX,welab.bank,💰 金融服务
+  - DOMAIN-SUFFIX,airstarbank.com,💰 金融服务
+  - DOMAIN-SUFFIX,revolut.com,💰 金融服务
+  - DOMAIN-SUFFIX,airwallex.com,💰 金融服务
+  - DOMAIN-SUFFIX,payoneer.com,💰 金融服务
+  - DOMAIN-SUFFIX,monzo.com,💰 金融服务
+  - DOMAIN-SUFFIX,dbs.com,💰 金融服务
+  - DOMAIN-SUFFIX,ocbc.com,💰 金融服务
   - RULE-SET,Cryptocurrency,🪙 加密货币
   # 国内测速站直连测本地宽带，其余测速站走 ⏱️ Speedtest 组（fast.com 随 Netflix）
   - DOMAIN-SUFFIX,speedtest.cn,🌐 本机·本地直连
@@ -309,7 +353,7 @@ rules:
   - DOMAIN-SUFFIX,test.ustc.edu.cn,🌐 本机·本地直连
   - DOMAIN-SUFFIX,speedtest.shu.edu.cn,🌐 本机·本地直连
   - DOMAIN-SUFFIX,speed.neu6.edu.cn,🌐 本机·本地直连
-  - RULE-SET,⏱️ Speedtest,⏱️ Speedtest
+  - RULE-SET,Speedtest,⏱️ Speedtest
   - DOMAIN-SUFFIX,speed.cloudflare.com,⏱️ Speedtest
   - DOMAIN-SUFFIX,librespeed.org,⏱️ Speedtest
   - DOMAIN-SUFFIX,nperf.com,⏱️ Speedtest
@@ -322,9 +366,9 @@ rules:
   - DOMAIN-SUFFIX,meter.net,⏱️ Speedtest
   - DOMAIN-SUFFIX,wifiman.me,⏱️ Speedtest
   - DOMAIN-SUFFIX,speedtest.org,⏱️ Speedtest
-  - RULE-SET,🍎 Apple,🍎 Apple
-  - RULE-SET,🪟 Microsoft,🪟 Microsoft
-  - RULE-SET,✈️ Telegram,✈️ Telegram
+  - RULE-SET,Apple,🍎 Apple
+  - RULE-SET,Microsoft,🪟 Microsoft
+  - RULE-SET,Telegram,✈️ Telegram
   - RULE-SET,Global,🚀 总模式
   - RULE-SET,ChinaMax,🌐 本机·本地直连
   - GEOIP,CN,🌐 本机·本地直连
@@ -335,37 +379,37 @@ rule-providers:
 {{- $rp := "https://cdn.jsdmirror.com/gh/perfect-panel/rules/rule/Clash" -}}
 {{- $rules := list
   (list "Lan" "Lan/Lan_No_Resolve")
-  (list "📮 GoogleFCM" "GoogleFCM/GoogleFCM_No_Resolve")
-  (list "▶️ YouTube" "YouTube/YouTube_No_Resolve")
-  (list "🔍 Google" "Google/Google_No_Resolve")
+  (list "GoogleFCM" "GoogleFCM/GoogleFCM_No_Resolve")
+  (list "YouTube" "YouTube/YouTube_No_Resolve")
+  (list "Google" "Google/Google_No_Resolve")
   (list "AdvertisingLite" "AdvertisingLite/AdvertisingLite_Classical_No_Resolve")
   (list "DouYin" "DouYin/DouYin_No_Resolve")
   (list "XiaoHongShu" "XiaoHongShu/XiaoHongShu_No_Resolve")
-  (list "📺 BiliBili" "BiliBili/BiliBili_No_Resolve")
+  (list "BiliBili" "BiliBili/BiliBili_No_Resolve")
   (list "SteamCN" "SteamCN/SteamCN_No_Resolve")
-  (list "🎮 Steam" "Steam/Steam_No_Resolve")
+  (list "Steam" "Steam/Steam_No_Resolve")
   (list "Game" "Game/Game_No_Resolve")
-  (list "🐙 GitHub" "GitHub/GitHub_No_Resolve")
-  (list "💬 Discord" "Discord/Discord_No_Resolve")
-  (list "🎶 TikTok" "TikTok/TikTok_No_Resolve")
+  (list "GitHub" "GitHub/GitHub_No_Resolve")
+  (list "Discord" "Discord/Discord_No_Resolve")
+  (list "TikTok" "TikTok/TikTok_No_Resolve")
   (list "Twitter" "Twitter/Twitter_No_Resolve")
-  (list "🎬 Netflix" "Netflix/Netflix_Classical_No_Resolve")
+  (list "Netflix" "Netflix/Netflix_Classical_No_Resolve")
   (list "Disney" "Disney/Disney_No_Resolve")
   (list "HBO" "HBO/HBO_No_Resolve")
   (list "PrimeVideo" "PrimeVideo/PrimeVideo_No_Resolve")
   (list "Bahamut" "Bahamut/Bahamut_No_Resolve")
-  (list "🎧 Spotify" "Spotify/Spotify_No_Resolve")
-  (list "👥 Facebook" "Facebook/Facebook_No_Resolve")
+  (list "Spotify" "Spotify/Spotify_No_Resolve")
+  (list "Facebook" "Facebook/Facebook_No_Resolve")
   (list "OpenAI" "OpenAI/OpenAI_No_Resolve")
   (list "Claude" "Claude/Claude_No_Resolve")
   (list "Gemini" "Gemini/Gemini_No_Resolve")
   (list "Copilot" "Copilot/Copilot_No_Resolve")
-  (list "💳 PayPal" "PayPal/PayPal_No_Resolve")
+  (list "PayPal" "PayPal/PayPal_No_Resolve")
   (list "Cryptocurrency" "Cryptocurrency/Cryptocurrency_No_Resolve")
-  (list "⏱️ Speedtest" "Speedtest/Speedtest_No_Resolve")
-  (list "🍎 Apple" "Apple/Apple_Classical_No_Resolve")
-  (list "🪟 Microsoft" "Microsoft/Microsoft_No_Resolve")
-  (list "✈️ Telegram" "Telegram/Telegram_No_Resolve")
+  (list "Speedtest" "Speedtest/Speedtest_No_Resolve")
+  (list "Apple" "Apple/Apple_Classical_No_Resolve")
+  (list "Microsoft" "Microsoft/Microsoft_No_Resolve")
+  (list "Telegram" "Telegram/Telegram_No_Resolve")
   (list "Global" "Global/Global_Classical_No_Resolve")
   (list "ChinaMax" "ChinaMax/ChinaMax_Classical_No_Resolve")
 }}
