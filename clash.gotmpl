@@ -188,6 +188,8 @@ tun:
   enable: true
   auto-route: true
   auto-detect-interface: true
+  # 防 Windows 多网卡并发 DNS 泄露；代价：本机无法被局域网其他设备主动访问（共享/远程桌面/局域网联机）
+  strict-route: true
   dns-hijack:
     - any:53
     - tcp://any:53
