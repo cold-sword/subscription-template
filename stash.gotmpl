@@ -667,6 +667,31 @@ proxy-groups:
 
 rules:
   - RULE-SET,Lan,🌐 本机·本地直连
+  # AI 必须排在 Google/YouTube 之前：Gemini 等都在 google.com/googleapis.com 下，否则会被 Google 规则先截走
+  - RULE-SET,OpenAI,🤖 AI
+  - RULE-SET,Claude,🤖 AI
+  - RULE-SET,Gemini,🤖 AI
+  - RULE-SET,Copilot,🤖 AI
+  # 补充 Gemini/Grok 域名（blackmatrix7 列表未收录）
+  - DOMAIN-SUFFIX,aistudio.google.com,🤖 AI
+  - DOMAIN-SUFFIX,geminiweb-pa.clients6.google.com,🤖 AI
+  - DOMAIN-SUFFIX,geminiweb-pa.clients.google.com,🤖 AI
+  - DOMAIN-SUFFIX,alkalicore-pa.clients6.google.com,🤖 AI
+  - DOMAIN-SUFFIX,webchannel-alkalimakersuite-pa.clients6.google.com,🤖 AI
+  - DOMAIN-SUFFIX,robinfrontend-pa.googleapis.com,🤖 AI
+  - DOMAIN-SUFFIX,geller-pa.googleapis.com,🤖 AI
+  - DOMAIN-SUFFIX,aisandbox-pa.googleapis.com,🤖 AI
+  - DOMAIN-SUFFIX,notebooklm.google.com,🤖 AI
+  - DOMAIN-SUFFIX,notebooklm.google,🤖 AI
+  - DOMAIN-SUFFIX,notebooklm.googleapis.com,🤖 AI
+  - DOMAIN-SUFFIX,labs.google,🤖 AI
+  - DOMAIN-SUFFIX,labs.google.com,🤖 AI
+  - DOMAIN-SUFFIX,gemini.google,🤖 AI
+  - DOMAIN-SUFFIX,gemini.gstatic.com,🤖 AI
+  - DOMAIN-SUFFIX,jules.google.com,🤖 AI
+  - DOMAIN-SUFFIX,grok.x.com,🤖 AI
+  - DOMAIN-SUFFIX,grok.com,🤖 AI
+  - DOMAIN-SUFFIX,x.ai,🤖 AI
   - RULE-SET,GoogleFCM,📮 GoogleFCM
   - RULE-SET,YouTube,▶️ YouTube
   - RULE-SET,Google,🔍 Google
@@ -689,10 +714,6 @@ rules:
   - RULE-SET,Bahamut,🎌 巴哈姆特
   - RULE-SET,Spotify,🎧 Spotify
   - RULE-SET,Facebook,👥 Facebook
-  - RULE-SET,OpenAI,🤖 AI
-  - RULE-SET,Claude,🤖 AI
-  - RULE-SET,Gemini,🤖 AI
-  - RULE-SET,Copilot,🤖 AI
   # 金融服务：出口固定（默认故障转移组），避免登录地频繁变化触发风控
   - RULE-SET,PayPal,💰 金融服务
   - DOMAIN-SUFFIX,wise.com,💰 金融服务

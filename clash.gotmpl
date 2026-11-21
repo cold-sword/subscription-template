@@ -861,6 +861,8 @@ rules:
   - DST-PORT,53,🌐 DNS_Hijack
   - DST-PORT,853,🧭 DNS连接
   - RULE-SET,WebRTC_端/域,📞 WebRTC
+  # AI 必须排在 Google/YouTube 之前：Gemini 等都在 google.com/googleapis.com 下，否则会被 Google 规则先截走
+  - RULE-SET,AI_域,🤖 AI
   - RULE-SET,GoogleFCM_域,📮 GoogleFCM
   - RULE-SET,YouTube_域,▶️ YouTube
   - RULE-SET,Google_域,🔍 Google
@@ -892,7 +894,6 @@ rules:
   - RULE-SET,Spotify_域,🎧 Spotify
   - RULE-SET,Facebook_域,👥 Facebook
   - RULE-SET,Facebook_IP,👥 Facebook,no-resolve
-  - RULE-SET,AI_域,🤖 AI
   # 金融服务：出口固定（默认故障转移组），避免登录地频繁变化触发风控；国内金融站（futu.cn 等）排除，仍直连
   - AND,((RULE-SET,Finance_域),(NOT,((RULE-SET,CN_域)))),💰 金融服务
   - RULE-SET,PayPal_域,💰 金融服务
